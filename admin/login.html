@@ -206,11 +206,15 @@
         async function loginWithGoogle() {
             console.log('Google login clicked');
             try {
-                // Use direct Auth0 URL redirect (more reliable)
+                // Use Railway URL for production
+                const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                    ? window.location.origin 
+                    : 'https://denysbeautyworld.up.railway.app';
+                
                 const authUrl = `https://${ADMIN_CONFIG.AUTH0_DOMAIN}/authorize?` +
                     `response_type=code&` +
                     `client_id=${ADMIN_CONFIG.AUTH0_CLIENT_ID}&` +
-                    `redirect_uri=${encodeURIComponent(window.location.origin + '/admin/callback.html')}&` +
+                    `redirect_uri=${encodeURIComponent(baseUrl + '/admin/callback.html')}&` +
                     `connection=google-oauth2&` +
                     `scope=openid profile email`;
                 
