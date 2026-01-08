@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Admin System - Deny's Beauty World</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#8B5A2B",
+                        "primary-light": "#B88A5C",
+                        "background-light": "#F9F5F0",
+                        "background-dark": "#1A1512",
+                        "gold": "#D4AF37",
+                        "champagne": "#F7E7CE",
+                    },
+                    fontFamily: {
+                        display: ['"Playfair Display"', 'serif'],
+                        body: ['"Lato"', 'sans-serif'],
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        .glass-panel {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+        .dark .glass-panel {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body class="font-body bg-background-light dark:bg-background-dark min-h-screen py-8 relative">
+    <div class="absolute inset-0 z-0">
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-gold/20 rounded-full blur-3xl filter opacity-40"></div>
+        <div class="absolute bottom-1/4 right-1/3 w-64 h-64 bg-primary/20 rounded-full blur-3xl filter opacity-40"></div>
+    </div>
+    
+    <div class="relative z-10 w-full max-w-md mx-auto p-6">
+        <div class="glass-panel bg-white/80 dark:bg-black/60 rounded-2xl p-8 shadow-2xl">
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center gap-2 mb-4">
+                    <span class="material-icons text-red-600 text-4xl">warning</span>
+                    <span class="font-display font-bold text-3xl text-primary dark:text-champagne tracking-wider">RESET</span>
+                </div>
+                <h1 class="text-2xl font-display font-semibold text-gray-800 dark:text-gray-200 mb-2">Transfer to Real Admin</h1>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Reset system for salon owner</p>
+            </div>
+
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <div class="flex items-start">
+                    <span class="material-icons text-red-600 text-sm mt-0.5 mr-2">info</span>
+                    <div class="text-sm text-red-800">
+                        <p class="font-semibold mb-1">⚠️ Developer Reset</p>
+                        <p>This will delete all admin accounts so the real salon owner can create their master admin account.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4 mb-6">
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <p class="text-sm text-blue-800">
+                        <span class="font-semibold">Step 1:</span> Click reset to clear all admin accounts
+                    </p>
+                </div>
+                <div class="bg-green-50 border border-green-200 rounded-lg p-3">
+                    <p class="text-sm text-green-800">
+                        <span class="font-semibold">Step 2:</span> Real admin goes to /admin/signup.html
+                    </p>
+                </div>
+                <div class="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                    <p class="text-sm text-purple-800">
+                        <span class="font-semibold">Step 3:</span> Real admin becomes master with full control
+                    </p>
+                </div>
+            </div>
+
+            <button id="resetBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 mb-4">
+                <span class="flex items-center justify-center gap-2">
+                    <span class="material-icons">refresh</span>
+                    Reset Admin System
+                </span>
+            </button>
+            
+            <button onclick="window.location.href='login.html'" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-4 rounded-lg transition-all">
+                <span class="flex items-center justify-center gap-2">
+                    <span class="material-icons">arrow_back</span>
+                    Cancel
+                </span>
+            </button>
+            
+            <div id="message" class="mt-4 p-3 rounded hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            if (confirm('⚠️ Are you sure? This will delete ALL admin accounts and allow the real admin to take control!')) {
+                if (confirm('This action cannot be undone. The real salon owner will need to create their account. Continue?')) {
+                    // Clear all admin accounts
+                    localStorage.removeItem('adminAccounts');
+                    
+                    showMessage('✅ Admin system reset successfully! Real admin can now signup at /admin/signup.html', 'success');
+                    
+                    let countdown = 5;
+                    const countdownInterval = setInterval(() => {
+                        countdown--;
+                        if (countdown > 0) {
+                            showMessage(`✅ System reset! Redirecting to signup in ${countdown} seconds...`, 'success');
+                        } else {
+                            clearInterval(countdownInterval);
+                            window.location.href = 'signup.html';
+                        }
+                    }, 1000);
+                }
+            }
+        });
+        
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.className = `mt-4 p-3 rounded ${type === 'error' ? 'bg-red-100 text-red-700 border border-red-400' : 'bg-green-100 text-green-700 border border-green-400'}`;
+            messageDiv.textContent = message;
+            messageDiv.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
