@@ -1,4 +1,3 @@
-
 // Secure Admin Configuration
 const ADMIN_CONFIG = {
     // Only these Google accounts can access admin panel
