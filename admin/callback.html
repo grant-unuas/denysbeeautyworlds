@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication - Deny's Beauty World</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+    <script src="config.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body class="font-body bg-background-light min-h-screen flex items-center justify-center">
+    <div class="text-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+        <h2 class="text-xl font-semibold text-gray-800 mb-2">Authenticating...</h2>
+        <p class="text-gray-600">Please wait while we verify your credentials</p>
+        <div id="message" class="mt-4 p-3 rounded hidden"></div>
+    </div>
+
+    <script>
+        let auth0Client;
+
+        async function handleCallback() {
+            try {
+                // Use Railway URL for production
+                const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                    ? window.location.origin 
+                    : 'https://denysbeautyworld.up.railway.app';
+                
+                // Initialize Auth0 client
+                auth0Client = await auth0.createAuth0Client({
+                    domain: ADMIN_CONFIG.AUTH0_DOMAIN,
+                    clientId: ADMIN_CONFIG.AUTH0_CLIENT_ID,
+                    authorizationParams: {
+                        redirect_uri: baseUrl + '/admin/callback.html'
+                    }
+                });
+
+                // Handle the callback
+                await auth0Client.handleRedirectCallback();
+                
+                // Get user info
+                const user = await auth0Client.getUser();
+                console.log('User authenticated:', user);
+
+                if (!user || !user.email) {
+                    throw new Error('No user information received');
+                }
+
+                // Check if email is authorized
+                if (!isAuthorizedEmail(user.email)) {
+                    showMessage('❌ Access Denied: Your email is not authorized for admin access.', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 3000);
+                    return;
+                }
+
+                // Check if this is first admin or existing admin
+                const admins = JSON.parse(localStorage.getItem('adminAccounts') || '[]');
+                let adminData;
+
+                if (admins.length === 0) {
+                    // First admin - create master admin account
+                    adminData = {
+                        id: Date.now().toString(),
+                        fullName: user.name || user.email,
+                        email: user.email,
+                        provider: 'google',
+                        role: 'master',
+                        createdAt: new Date().toISOString(),
+                        googleId: user.sub
+                    };
+                    
+                    admins.push(adminData);
+                    localStorage.setItem('adminAccounts', JSON.stringify(admins));
+                    
+                    showMessage('✅ Master admin account created successfully!', 'success');
+                } else {
+                    // Check if admin already exists
+                    adminData = admins.find(admin => admin.email === user.email);
+                    
+                    if (!adminData) {
+                        showMessage('❌ Admin account not found. Contact the master admin.', 'error');
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 3000);
+                        return;
+                    }
+                    
+                    showMessage('✅ Authentication successful!', 'success');
+                }
+
+                // Set session
+                sessionStorage.setItem('adminAuthenticated', 'true');
+                sessionStorage.setItem('adminLoginTime', Date.now().toString());
+                sessionStorage.setItem('adminData', JSON.stringify(adminData));
+
+                // Redirect to dashboard
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error('Authentication error:', error);
+                
+                if (error.error === 'access_denied') {
+                    showMessage('❌ Access denied. Only authorized emails can access admin panel.', 'error');
+                } else {
+                    showMessage('❌ Authentication failed: ' + error.message, 'error');
+                }
+                
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 3000);
+            }
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.className = `mt-4 p-3 rounded ${type === 'error' ? 'bg-red-100 text-red-700 border border-red-400' : 'bg-green-100 text-green-700 border border-green-400'}`;
+            messageDiv.textContent = message;
+            messageDiv.classList.remove('hidden');
+        }
+
+        // Start the callback handling
+        window.addEventListener('load', handleCallback);
+    </script>
+</body>
+</html>
