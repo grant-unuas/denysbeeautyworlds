@@ -189,7 +189,25 @@
         }
 
         function saveAdmin(adminData) {
+            // Check if this is the first admin (master admin)
             const admins = JSON.parse(localStorage.getItem('adminAccounts') || '[]');
+            
+            // Only allow signup if no admins exist (first admin)
+            if (admins.length > 0) {
+                showMessage('Admin already exists. Redirecting to login in 3 seconds...', 'error');
+                
+                let countdown = 3;
+                const countdownInterval = setInterval(() => {
+                    countdown--;
+                    if (countdown > 0) {
+                        showMessage(`Admin already exists. Redirecting to login in ${countdown} seconds...`, 'error');
+                    } else {
+                        clearInterval(countdownInterval);
+                        window.location.href = 'login.html';
+                    }
+                }, 1000);
+                return false;
+            }
             
             if (admins.find(admin => admin.email === adminData.email)) {
                 return false;
@@ -198,6 +216,7 @@
             admins.push({
                 id: Date.now().toString(),
                 ...adminData,
+                role: 'master',
                 createdAt: new Date().toISOString()
             });
             
@@ -231,10 +250,18 @@
             const saved = saveAdmin(adminData);
             
             if (saved) {
-                showMessage('Account created successfully! Redirecting to login...', 'success');
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 2000);
+                showMessage('Account created successfully! Redirecting to login in 5 seconds...', 'success');
+                
+                let countdown = 5;
+                const countdownInterval = setInterval(() => {
+                    countdown--;
+                    if (countdown > 0) {
+                        showMessage(`Account created successfully! Redirecting to login in ${countdown} seconds...`, 'success');
+                    } else {
+                        clearInterval(countdownInterval);
+                        window.location.href = 'login.html';
+                    }
+                }, 1000);
             } else {
                 showMessage('Email already exists. Please use a different email.');
             }
