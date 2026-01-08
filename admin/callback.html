@@ -19,26 +19,56 @@
     </div>
 
     <script>
+        // Fallback config in case config.js doesn't load
+        const FALLBACK_CONFIG = {
+            AUTHORIZED_EMAILS: [
+                'grantunuas@gmail.com',
+                'grantunua@gmail.com', 
+                'grant.unua@gmail.com',
+                'grantunua.s@gmail.com'
+            ],
+            AUTH0_DOMAIN: 'dev-i5b08jbmyiyg4g8s.us.auth0.com',
+            AUTH0_CLIENT_ID: 'gtsyHwdN37OnhgHl7wypSrCLVpblQ9s6'
+        };
+        
+        // Use config or fallback
+        const CONFIG = window.ADMIN_CONFIG || FALLBACK_CONFIG;
+        
+        // Local authorization function
+        function checkAuthorizedEmail(email) {
+            const normalizedEmail = email.toLowerCase().trim();
+            console.log('Checking email:', normalizedEmail);
+            console.log('Against authorized emails:', CONFIG.AUTHORIZED_EMAILS);
+            return CONFIG.AUTHORIZED_EMAILS.includes(normalizedEmail);
+        }
+        
         let auth0Client;
 
         async function handleCallback() {
             try {
+                console.log('Starting callback handling...');
+                
                 // Use Railway URL for production
                 const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
                     ? window.location.origin 
                     : 'https://denysbeautyworld.up.railway.app';
                 
+                console.log('Base URL:', baseUrl);
+                
                 // Initialize Auth0 client
                 auth0Client = await auth0.createAuth0Client({
-                    domain: ADMIN_CONFIG.AUTH0_DOMAIN,
-                    clientId: ADMIN_CONFIG.AUTH0_CLIENT_ID,
+                    domain: CONFIG.AUTH0_DOMAIN,
+                    clientId: CONFIG.AUTH0_CLIENT_ID,
                     authorizationParams: {
                         redirect_uri: baseUrl + '/admin/callback.html'
                     }
                 });
 
+                console.log('Auth0 client initialized');
+
                 // Handle the callback
                 await auth0Client.handleRedirectCallback();
+                console.log('Callback handled');
                 
                 // Get user info
                 const user = await auth0Client.getUser();
@@ -50,11 +80,10 @@
 
                 // Check if email is authorized
                 console.log('User email:', user.email);
-                console.log('Authorized emails:', ADMIN_CONFIG.AUTHORIZED_EMAILS);
-                console.log('Is authorized:', isAuthorizedEmail(user.email));
+                console.log('Authorized emails:', CONFIG.AUTHORIZED_EMAILS);
                 
-                if (!isAuthorizedEmail(user.email)) {
-                    showMessage(`❌ Access Denied: Email "${user.email}" is not authorized. Authorized emails: ${ADMIN_CONFIG.AUTHORIZED_EMAILS.join(', ')}`, 'error');
+                if (!checkAuthorizedEmail(user.email)) {
+                    showMessage(`❌ Access Denied: Email "${user.email}" is not authorized. Authorized emails: ${CONFIG.AUTHORIZED_EMAILS.join(', ')}`, 'error');
                     setTimeout(() => {
                         window.location.href = 'login.html';
                     }, 5000);
@@ -86,14 +115,24 @@
                     adminData = admins.find(admin => admin.email === user.email);
                     
                     if (!adminData) {
-                        showMessage('❌ Admin account not found. Contact the master admin.', 'error');
-                        setTimeout(() => {
-                            window.location.href = 'login.html';
-                        }, 3000);
-                        return;
+                        // Create new admin account for authorized email
+                        adminData = {
+                            id: Date.now().toString(),
+                            fullName: user.name || user.email,
+                            email: user.email,
+                            provider: 'google',
+                            role: 'admin',
+                            createdAt: new Date().toISOString(),
+                            googleId: user.sub
+                        };
+                        
+                        admins.push(adminData);
+                        localStorage.setItem('adminAccounts', JSON.stringify(admins));
+                        
+                        showMessage('✅ Admin account created successfully!', 'success');
+                    } else {
+                        showMessage('✅ Authentication successful!', 'success');
                     }
-                    
-                    showMessage('✅ Authentication successful!', 'success');
                 }
 
                 // Set session
@@ -111,8 +150,10 @@
                 
                 if (error.error === 'access_denied') {
                     showMessage('❌ Access denied. Only authorized emails can access admin panel.', 'error');
+                } else if (error.message && error.message.includes('Invalid state')) {
+                    showMessage('❌ Authentication session expired. Please try again.', 'error');
                 } else {
-                    showMessage('❌ Authentication failed: ' + error.message, 'error');
+                    showMessage('❌ Authentication failed: ' + (error.message || 'Unknown error'), 'error');
                 }
                 
                 setTimeout(() => {
