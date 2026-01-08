@@ -1,0 +1,24 @@
+[
+  {
+    "userId": "admin",
+    "name": "Admin",
+    "email": "admin@example.com",
+    "phone": "",
+    "bio": "",
+    "photo_url": "/uploads/1767788000991-143506828.png",
+    "id": 1767787879849,
+    "created_at": "2026-01-07T12:11:19.849Z",
+    "updated_at": "2026-01-07T12:13:20.994Z"
+  },
+  {
+    "userId": "google-oauth2|111272530617430321475",
+    "name": "grant unuas",
+    "email": "grantunuas@gmail.com",
+    "phone": "",
+    "bio": "",
+    "photo_url": "/uploads/1767788319953-787909374.png",
+    "id": 1767788121392,
+    "created_at": "2026-01-07T12:15:21.392Z",
+    "updated_at": "2026-01-07T12:18:39.956Z"
+  }
+]

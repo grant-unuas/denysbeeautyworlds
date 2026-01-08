@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Deny's Beauty World - Why Choose Us</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&amp;family=Montserrat:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#A67C52", // Bronze/Gold tone
+                        secondary: "#D4AF37", // Metallic Gold
+                        "background-light": "#FDFBF7", // Creamy white
+                        "background-dark": "#0F0E0D", // Deep warm black
+                        "surface-light": "rgba(255, 255, 255, 0.7)",
+                        "surface-dark": "rgba(28, 25, 23, 0.6)",
+                    },
+                    fontFamily: {
+                        display: ["'Playfair Display'", "serif"],
+                        body: ["'Montserrat'", "sans-serif"],
+                    },
+                    backgroundImage: {
+                        'gold-gradient': 'linear-gradient(135deg, #BF953F 0%, #FCF6BA 50%, #B38728 100%)',
+                        'subtle-glow-light': 'radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.15), transparent 70%)',
+                        'subtle-glow-dark': 'radial-gradient(circle at 50% 50%, rgba(166, 124, 82, 0.15), transparent 70%)',
+                    }
+                },
+            },
+        };
+    </script>
+<style>
+        .text-gold-gradient {
+            background: linear-gradient(to right, #cfaa66, #eecf8f, #9c7634);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .dark .text-gold-gradient {
+            background: linear-gradient(to right, #BF953F, #FCF6BA, #BF953F);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+        .glass-card {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200 font-body transition-colors duration-300 min-h-screen flex flex-col">
+<nav class="w-full py-6 px-8 flex justify-between items-center absolute top-0 left-0 z-50">
+<div class="text-2xl font-display font-bold text-primary tracking-widest uppercase">
+<a href="index.html" class="hover:text-secondary transition-colors">
+            Deny's Beauty World
+</a>
+</div>
+<div class="hidden md:flex space-x-8 text-sm font-medium tracking-wide">
+<a class="hover:text-primary transition-colors" href="index.html">Home</a>
+<a class="hover:text-primary transition-colors" href="about.html">About</a>
+<a class="hover:text-primary transition-colors" href="services.html">Services</a>
+<a class="hover:text-primary transition-colors" href="portfolio.html">Portfolio</a>
+<a class="hover:text-primary transition-colors" href="contact.html">Contact</a>
+<a class="hover:text-primary transition-colors" href="booking.html">Booking</a>
+<a class="text-primary border-b border-primary pb-1" href="why-choose-us.html">Why Us</a>
+</div>
+<button aria-controls="mobile-menu" aria-expanded="false" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-primary dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none" type="button" id="mobile-menu-button">
+<span class="sr-only">Open main menu</span>
+<span class="material-icons-outlined text-xl">menu</span>
+</button>
+</nav>
+<div class="md:hidden" id="mobile-menu" style="display: none;">
+<div class="px-2 pt-2 pb-3 space-y-1 bg-white dark:bg-black border-t border-primary/20">
+<a class="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" href="index.html">Home</a>
+<a class="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" href="about.html">About</a>
+<a class="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" href="services.html">Services</a>
+<a class="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" href="portfolio.html">Portfolio</a>
+<a class="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" href="contact.html">Contact</a>
+<a class="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors" href="booking.html">Booking</a>
+<a class="block px-3 py-2 text-base font-medium text-primary border-l-4 border-primary bg-primary/5" href="why-choose-us.html">Why Us</a>
+</div>
+</div>
+<section class="relative py-24 lg:py-32 flex-grow flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 bg-subtle-glow-light dark:bg-subtle-glow-dark pointer-events-none"></div>
+<div class="absolute top-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 dark:bg-primary/5"></div>
+<div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-secondary/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3 dark:bg-secondary/5"></div>
+<div class="container mx-auto px-6 relative z-10">
+<div class="text-center max-w-3xl mx-auto mb-20">
+<span class="inline-block py-1 px-3 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-widest uppercase mb-4 border border-primary/20">
+                    Excellence Defined
+                </span>
+<h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-6 text-gold-gradient leading-tight">
+                    Why Choose Deny's?
+                </h1>
+<p class="text-gray-600 dark:text-gray-400 text-lg font-light leading-relaxed">
+                    At Deny’s Beauty World, we don’t just offer beauty services; we craft experiences. Discover the luxury standard where your glow meets our passion.
+                </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<div class="glass-card group bg-surface-light dark:bg-surface-dark border border-white/40 dark:border-white/10 p-8 rounded-2xl shadow-xl hover:shadow-2xl hover:border-primary/50 dark:hover:border-primary/50 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-primary/20 to-transparent rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+<div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#d4af37] to-[#8b5e3c] flex items-center justify-center mb-6 shadow-lg text-white">
+<span class="material-icons-outlined text-3xl">diamond</span>
+</div>
+<h3 class="text-xl font-display font-bold text-gray-900 dark:text-white mb-3">Luxury Finishing</h3>
+<p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                        Unmatched attention to detail in every wig installation and styling session. We ensure a flawless, high-end finish that radiates elegance.
+                    </p>
+</div>
+<div class="glass-card group bg-surface-light dark:bg-surface-dark border border-white/40 dark:border-white/10 p-8 rounded-2xl shadow-xl hover:shadow-2xl hover:border-primary/50 dark:hover:border-primary/50 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-secondary/20 to-transparent rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+<div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#d4af37] to-[#8b5e3c] flex items-center justify-center mb-6 shadow-lg text-white">
+<span class="material-icons-outlined text-3xl">sell</span>
+</div>
+<h3 class="text-xl font-display font-bold text-gray-900 dark:text-white mb-3">Affordable Luxury</h3>
+<p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                        Premium beauty services shouldn't break the bank. Experience top-tier quality at competitive prices designed for your budget.
+                    </p>
+</div>
+<div class="glass-card group bg-surface-light dark:bg-surface-dark border border-white/40 dark:border-white/10 p-8 rounded-2xl shadow-xl hover:shadow-2xl hover:border-primary/50 dark:hover:border-primary/50 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-primary/20 to-transparent rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+<div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#d4af37] to-[#8b5e3c] flex items-center justify-center mb-6 shadow-lg text-white">
+<span class="material-icons-outlined text-3xl">verified_user</span>
+</div>
+<h3 class="text-xl font-display font-bold text-gray-900 dark:text-white mb-3">Skilled Experts</h3>
+<p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                        Our team consists of certified specialists in hair revamping, ventilation, and treatment. Trust your beauty to trained hands.
+                    </p>
+</div>
+<div class="glass-card group bg-surface-light dark:bg-surface-dark border border-white/40 dark:border-white/10 p-8 rounded-2xl shadow-xl hover:shadow-2xl hover:border-primary/50 dark:hover:border-primary/50 relative overflow-hidden lg:col-start-1 lg:ml-auto">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-secondary/20 to-transparent rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+<div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#d4af37] to-[#8b5e3c] flex items-center justify-center mb-6 shadow-lg text-white">
+<span class="material-icons-outlined text-3xl">spa</span>
+</div>
+<h3 class="text-xl font-display font-bold text-gray-900 dark:text-white mb-3">Serene Atmosphere</h3>
+<p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                        Relax in our pristine, comfortable salon designed to be your sanctuary. Cleanliness and comfort are our top priorities.
+                    </p>
+</div>
+<div class="glass-card group bg-surface-light dark:bg-surface-dark border border-white/40 dark:border-white/10 p-8 rounded-2xl shadow-xl hover:shadow-2xl hover:border-primary/50 dark:hover:border-primary/50 relative overflow-hidden lg:col-start-2 lg:mr-auto lg:col-span-2 lg:w-1/2">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-primary/20 to-transparent rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+<div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#d4af37] to-[#8b5e3c] flex items-center justify-center mb-6 shadow-lg text-white">
+<span class="material-icons-outlined text-3xl">bolt</span>
+</div>
+<h3 class="text-xl font-display font-bold text-gray-900 dark:text-white mb-3">Swift Delivery</h3>
+<p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                        We value your time. Whether it's wig laundry or a full install, enjoy prompt service without compromising on quality.
+                    </p>
+</div>
+</div>
+<div class="mt-20 text-center">
+<a class="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-opacity-90 text-white font-semibold rounded-full shadow-lg shadow-primary/30 transition-all hover:-translate-y-1" href="booking.html">
+<span class="material-icons-outlined text-xl">calendar_month</span>
+                    Book an Appointment
+                </a>
+<p class="mt-4 text-sm text-gray-500 dark:text-gray-500 font-medium">
+                    Or call us at <span class="text-primary dark:text-secondary">+234 816 755 9196</span>
+</p>
+</div>
+</div>
+</section>
+<footer class="relative pt-20 pb-10 overflow-hidden bg-background-light dark:bg-background-dark">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-secondary to-transparent opacity-50"></div>
+<div class="absolute -top-40 -right-40 w-96 h-96 bg-secondary/10 dark:bg-secondary/5 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute bottom-0 -left-20 w-72 h-72 bg-primary/10 dark:bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+<div class="container mx-auto px-6 relative z-10">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+<div class="space-y-6">
+<a class="inline-block group" href="index.html">
+<div class="font-display text-3xl md:text-4xl font-bold tracking-wide">
+<span class="text-primary dark:text-secondary">DENY'S</span>
+<br/>
+<span class="text-gold-gradient text-2xl md:text-3xl ml-4">BEAUTY WORLD</span>
+</div>
+</a>
+<p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed italic border-l-2 border-secondary pl-4">
+"Your Beauty, Our Pride! Deny's beauty world provides luxury, where luxury meets the glow."
+</p>
+<div class="flex items-center space-x-3 text-gray-700 dark:text-gray-300 mt-4">
+<div class="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center text-primary dark:text-secondary">
+<i class="fab fa-whatsapp"></i>
+</div>
+<span class="text-sm font-medium hover:text-primary dark:hover:text-secondary transition-colors cursor-pointer">+234 816 755 9196</span>
+</div>
+</div>
+<div class="lg:pl-8">
+<h3 class="font-display text-xl font-semibold text-primary dark:text-secondary mb-6 relative inline-block">
+Quick Links
+<span class="absolute -bottom-2 left-0 w-1/2 h-0.5 bg-secondary"></span>
+</h3>
+<ul class="space-y-3">
+<li><a class="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-secondary transition-colors text-sm flex items-center group" href="index.html"><span class="w-1.5 h-1.5 rounded-full bg-secondary mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></span>Home</a></li>
+<li><a class="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-secondary transition-colors text-sm flex items-center group" href="about.html"><span class="w-1.5 h-1.5 rounded-full bg-secondary mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></span>About Us</a></li>
+<li><a class="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-secondary transition-colors text-sm flex items-center group" href="portfolio.html"><span class="w-1.5 h-1.5 rounded-full bg-secondary mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></span>Portfolio</a></li>
+<li><a class="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-secondary transition-colors text-sm flex items-center group" href="booking.html"><span class="w-1.5 h-1.5 rounded-full bg-secondary mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></span>Booking</a></li>
+</ul>
+</div>
+<div>
+<h3 class="font-display text-xl font-semibold text-primary dark:text-secondary mb-6 relative inline-block">
+Our Services
+<span class="absolute -bottom-2 left-0 w-1/2 h-0.5 bg-secondary"></span>
+</h3>
+<ul class="space-y-3">
+<li><a class="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-secondary transition-colors text-sm" href="services.html">Wig Revamping & Styling</a></li>
+<li><a class="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-secondary transition-colors text-sm" href="services.html">Wig Installation</a></li>
+<li><a class="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-secondary transition-colors text-sm" href="services.html">Custom Wigging</a></li>
+<li><a class="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-secondary transition-colors text-sm" href="services.html">Ventilation & Retouching</a></li>
+<li><a class="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-secondary transition-colors text-sm" href="services.html">Bridal Styling</a></li>
+</ul>
+</div>
+<div>
+<h3 class="font-display text-xl font-semibold text-primary dark:text-secondary mb-6 relative inline-block">
+Stay Connected
+<span class="absolute -bottom-2 left-0 w-1/2 h-0.5 bg-secondary"></span>
+</h3>
+<p class="text-gray-600 dark:text-gray-400 text-sm mb-4">Subscribe to receive luxury updates and exclusive offers.</p>
+<form class="flex flex-col gap-3 mb-6">
+<div class="relative">
+<input class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-secondary dark:focus:border-secondary text-gray-800 dark:text-gray-200 shadow-sm transition-colors" placeholder="Your Email Address" type="email"/>
+<button class="absolute right-2 top-1.5 bottom-1.5 bg-primary hover:bg-primary/90 text-white rounded-md px-4 text-xs font-semibold tracking-wider transition-all uppercase" type="button">
+Join
+</button>
+</div>
+</form>
+<div class="flex space-x-4">
+<a class="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-secondary hover:text-white hover:border-secondary dark:hover:bg-secondary dark:hover:text-white dark:hover:border-secondary transition-all duration-300" href="#">
+<i class="fab fa-instagram"></i>
+</a>
+<a class="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-secondary hover:text-white hover:border-secondary dark:hover:bg-secondary dark:hover:text-white dark:hover:border-secondary transition-all duration-300" href="#">
+<i class="fab fa-facebook-f"></i>
+</a>
+<a class="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-secondary hover:text-white hover:border-secondary dark:hover:bg-secondary dark:hover:text-white dark:hover:border-secondary transition-all duration-300" href="#">
+<i class="fab fa-tiktok"></i>
+</a>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-200 dark:border-white/10 mb-8"></div>
+<div class="flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 dark:text-gray-500">
+<p class="text-center md:text-left mb-4 md:mb-0">
+© 2026 <span class="text-primary dark:text-secondary font-medium">Deny's Beauty World</span>. All Rights Reserved.
+</p>
+<div class="flex space-x-6">
+<a class="hover:text-primary dark:hover:text-secondary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary dark:hover:text-secondary transition-colors" href="#">Terms of Service</a>
+</div>
+</div>
+</div>
+</footer>
+<script>
+        // Simple toggle to demonstrate dark mode capability
+        // In a real app, this would be a button
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+<script>
+const mobileMenuButton = document.querySelector('[aria-controls="mobile-menu"]');
+const mobileMenu = document.getElementById('mobile-menu');
+if (mobileMenuButton && mobileMenu) {
+    mobileMenuButton.addEventListener('click', function() {
+        const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+        mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+        mobileMenu.style.display = isExpanded ? 'none' : 'block';
+    });
+}
+</script>
+
+</body></html>

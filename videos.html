@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Videos - Deny's Beauty World</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#8B5A2B",
+                        "primary-light": "#B88A5C",
+                        "background-light": "#F9F5F0",
+                        "gold": "#D4AF37",
+                        "champagne": "#F7E7CE",
+                    },
+                    fontFamily: {
+                        display: ['"Playfair Display"', 'serif'],
+                        body: ['"Lato"', 'sans-serif'],
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="font-body bg-background-light">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center gap-2">
+                    <span class="material-icons text-primary text-2xl lg:text-3xl">diamond</span>
+                    <span class="font-display font-bold text-lg lg:text-2xl text-primary">DENY'S BEAUTY WORLD</span>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <button id="mobileMenuBtn" class="md:hidden p-2">
+                    <span class="material-icons text-gray-600">menu</span>
+                </button>
+                
+                <!-- Desktop navigation -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-gray-700 hover:text-primary transition-colors">Home</a>
+                    <a href="products.html" class="text-gray-700 hover:text-primary transition-colors">Products</a>
+                    <a href="services.html" class="text-gray-700 hover:text-primary transition-colors">Services</a>
+                    <a href="videos.html" class="text-primary font-semibold">Videos</a>
+                    <a href="portfolio.html" class="text-gray-700 hover:text-primary transition-colors">Portfolio</a>
+                    <a href="contact.html" class="text-gray-700 hover:text-primary transition-colors">Contact</a>
+                </nav>
+            </div>
+            
+            <!-- Mobile navigation -->
+            <nav id="mobileMenu" class="md:hidden hidden pb-4">
+                <div class="flex flex-col space-y-2">
+                    <a href="index.html" class="text-gray-700 hover:text-primary py-2 transition-colors">Home</a>
+                    <a href="products.html" class="text-gray-700 hover:text-primary py-2 transition-colors">Products</a>
+                    <a href="services.html" class="text-gray-700 hover:text-primary py-2 transition-colors">Services</a>
+                    <a href="videos.html" class="text-primary font-semibold py-2">Videos</a>
+                    <a href="portfolio.html" class="text-gray-700 hover:text-primary py-2 transition-colors">Portfolio</a>
+                    <a href="contact.html" class="text-gray-700 hover:text-primary py-2 transition-colors">Contact</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-primary to-primary-light text-white py-8 lg:py-16">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h1 class="font-display text-2xl md:text-4xl lg:text-5xl font-bold mb-2 lg:mb-4">Beauty Tutorials & Showcases</h1>
+            <p class="text-base lg:text-xl opacity-90">Watch our latest styling tutorials and transformations</p>
+        </div>
+    </section>
+
+    <!-- Videos Grid -->
+    <section class="py-8 lg:py-16">
+        <div class="max-w-7xl mx-auto px-4">
+            <div id="videosGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8">
+                <!-- Videos will be loaded here -->
+            </div>
+            
+            <div id="loadingMessage" class="text-center py-8 lg:py-16">
+                <div class="inline-block animate-spin rounded-full h-6 w-6 lg:h-8 lg:w-8 border-b-2 border-primary"></div>
+                <p class="mt-4 text-gray-600 text-sm lg:text-base">Loading videos...</p>
+            </div>
+            
+            <div id="noVideosMessage" class="text-center py-8 lg:py-16 hidden">
+                <span class="material-icons text-4xl lg:text-6xl text-gray-400 mb-4">video_library</span>
+                <p class="text-lg lg:text-xl text-gray-600">No videos available at the moment</p>
+                <p class="text-gray-500 mt-2 text-sm lg:text-base">Check back soon for new content!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <span class="material-icons text-gold text-3xl">diamond</span>
+                <span class="font-display font-bold text-2xl text-gold">DENY'S BEAUTY WORLD</span>
+            </div>
+            <p class="text-gray-400">Your premier destination for luxury wigs and beauty products</p>
+        </div>
+    </footer>
+
+    <script>
+        let allVideos = [];
+
+        async function loadVideos() {
+            try {
+                const response = await fetch('/api/videos');
+                allVideos = await response.json();
+                
+                document.getElementById('loadingMessage').classList.add('hidden');
+                
+                if (allVideos.length === 0) {
+                    document.getElementById('noVideosMessage').classList.remove('hidden');
+                } else {
+                    displayVideos(allVideos);
+                }
+            } catch (error) {
+                console.error('Error loading videos:', error);
+                document.getElementById('loadingMessage').innerHTML = `
+                    <p class="text-red-600">Error loading videos. Please try again later.</p>
+                `;
+            }
+        }
+
+        function displayVideos(videos) {
+            const grid = document.getElementById('videosGrid');
+            
+            grid.innerHTML = videos.map(video => `
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <div class="aspect-video overflow-hidden cursor-pointer relative" onclick="openVideo('${video.video_url}')">
+                        ${video.video_url ? `
+                            <video class="w-full h-full object-cover" muted>
+                                <source src="${video.video_url}" type="video/mp4">
+                            </video>
+                        ` : `
+                            <div class="w-full h-full bg-gray-300 flex items-center justify-center">
+                                <span class="material-icons text-gray-500 text-4xl lg:text-6xl">video_library</span>
+                            </div>
+                        `}
+                        <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 opacity-0 hover:opacity-100 transition-opacity">
+                            <span class="material-icons text-white text-4xl lg:text-6xl">play_circle_filled</span>
+                        </div>
+                    </div>
+                    <div class="p-3 lg:p-6">
+                        <h3 class="font-display text-base lg:text-xl font-semibold text-gray-800 mb-2">${video.title}</h3>
+                        <p class="text-gray-600 text-xs lg:text-sm mb-3 lg:mb-4 line-clamp-2">${video.description || 'Watch this amazing beauty transformation!'}</p>
+                        <button onclick="openVideo('${video.video_url}')" class="w-full bg-primary text-white px-3 lg:px-4 py-2 rounded-lg hover:bg-primary-light transition-colors flex items-center justify-center gap-2 text-sm lg:text-base">
+                            <span class="material-icons text-sm lg:text-base">play_arrow</span>
+                            Watch Video
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openVideo(videoUrl) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-2 lg:p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-screen overflow-hidden">
+                    <div class="flex justify-between items-center p-3 lg:p-4 border-b">
+                        <h3 class="text-base lg:text-lg font-semibold">Video Player</h3>
+                        <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700 p-1">
+                            <span class="material-icons text-lg lg:text-xl">close</span>
+                        </button>
+                    </div>
+                    <div class="aspect-video">
+                        <video controls class="w-full h-full">
+                            <source src="${videoUrl}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Load videos when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadVideos();
+            
+            // Mobile menu functionality
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        });
+    </script>
+</body>
+</html>

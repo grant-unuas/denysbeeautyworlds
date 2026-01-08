@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Deny's Beauty World</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#8B5A2B",
+                        "primary-light": "#B88A5C",
+                        "background-light": "#F9F5F0",
+                        "background-dark": "#1A1512",
+                        "gold": "#D4AF37",
+                        "champagne": "#F7E7CE",
+                    },
+                    fontFamily: {
+                        display: ['"Playfair Display"', 'serif'],
+                        body: ['"Lato"', 'sans-serif'],
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="font-body bg-background-light dark:bg-background-dark min-h-screen">
+    <!-- Sidebar -->
+    <div class="flex">
+        <!-- Mobile menu button -->
+        <button id="mobileMenuBtn" class="lg:hidden fixed top-4 left-4 z-50 bg-primary text-white p-2 rounded-lg">
+            <span class="material-icons">menu</span>
+        </button>
+
+        <!-- Sidebar -->
+        <div id="sidebar" class="w-64 bg-white dark:bg-gray-800 shadow-lg h-screen fixed transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-40">
+            <div class="p-6">
+                <div class="flex items-center gap-2 mb-8">
+                    <span class="material-icons text-primary text-3xl">diamond</span>
+                    <span class="font-display font-bold text-xl text-primary dark:text-champagne">DENY'S</span>
+                </div>
+                
+                <nav class="space-y-2">
+                    <a href="#dashboard" onclick="showSection('dashboard')" class="nav-item flex items-center gap-3 p-3 rounded-lg bg-primary text-white">
+                        <span class="material-icons">dashboard</span>
+                        Dashboard
+                    </a>
+                    <a href="#products" onclick="showSection('products')" class="nav-item flex items-center gap-3 p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <span class="material-icons">inventory</span>
+                        Wigs/Products
+                    </a>
+                    <a href="#videos" onclick="showSection('videos')" class="nav-item flex items-center gap-3 p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <span class="material-icons">video_library</span>
+                        Videos
+                    </a>
+                    <a href="#gallery" onclick="showSection('gallery')" class="nav-item flex items-center gap-3 p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <span class="material-icons">photo_library</span>
+                        Gallery
+                    </a>
+                    <a href="#services" onclick="showSection('services')" class="nav-item flex items-center gap-3 p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <span class="material-icons">spa</span>
+                        Services
+                    </a>
+                    <a href="#bookings" onclick="showSection('bookings')" class="nav-item flex items-center gap-3 p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <span class="material-icons">event</span>
+                        Bookings
+                    </a>
+                    <a href="#profile" onclick="showSection('profile')" class="nav-item flex items-center gap-3 p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <span class="material-icons">person</span>
+                        Profile
+                    </a>
+                </nav>
+            </div>
+            
+            <div class="absolute bottom-6 left-6 right-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div id="sidebarProfilePhoto" class="w-8 h-8 bg-primary rounded-full flex items-center justify-center overflow-hidden">
+                            <span id="sidebarPhotoPlaceholder" class="material-icons text-white text-sm">person</span>
+                            <img id="sidebarPhoto" class="w-full h-full object-cover hidden" alt="Profile">
+                        </div>
+                        <span id="userName" class="text-sm font-medium text-gray-700 dark:text-gray-300">Admin</span>
+                    </div>
+                    <button onclick="logout()" class="text-gray-500 hover:text-red-500">
+                        <span class="material-icons">logout</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="lg:ml-64 flex-1 p-4 lg:p-8 pt-16 lg:pt-8">
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="section">
+                <div class="mb-8">
+                    <h1 class="text-2xl lg:text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-2">Dashboard</h1>
+                    <p class="text-gray-600 dark:text-gray-400">Welcome to Deny's Beauty World Admin Panel</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
+                    <div class="bg-white dark:bg-gray-800 p-4 lg:p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs lg:text-sm font-medium text-gray-600 dark:text-gray-400">Total Wigs/Products</p>
+                                <p id="totalProducts" class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-100">0</p>
+                            </div>
+                            <div class="w-10 h-10 lg:w-12 lg:h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <span class="material-icons text-blue-600 text-lg lg:text-xl">inventory</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 p-4 lg:p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs lg:text-sm font-medium text-gray-600 dark:text-gray-400">Uploaded Videos</p>
+                                <p id="totalVideos" class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-100">0</p>
+                            </div>
+                            <div class="w-10 h-10 lg:w-12 lg:h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <span class="material-icons text-green-600 text-lg lg:text-xl">video_library</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 p-4 lg:p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs lg:text-sm font-medium text-gray-600 dark:text-gray-400">Gallery Images</p>
+                                <p id="totalImages" class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-100">0</p>
+                            </div>
+                            <div class="w-10 h-10 lg:w-12 lg:h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <span class="material-icons text-purple-600 text-lg lg:text-xl">photo_library</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 p-4 lg:p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs lg:text-sm font-medium text-gray-600 dark:text-gray-400">Total Bookings</p>
+                                <p id="totalBookings" class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-100">0</p>
+                            </div>
+                            <div class="w-10 h-10 lg:w-12 lg:h-12 bg-gold/20 rounded-lg flex items-center justify-center">
+                                <span class="material-icons text-gold text-lg lg:text-xl">event</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity & Quick Actions -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+                    <div class="bg-white dark:bg-gray-800 p-4 lg:p-6 rounded-xl shadow-lg">
+                        <h3 class="text-base lg:text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Recent Activity</h3>
+                        <div id="recentActivity" class="space-y-3">
+                            <p class="text-gray-500 dark:text-gray-400 text-center py-4">No recent activity</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 p-4 lg:p-6 rounded-xl shadow-lg">
+                        <h3 class="text-base lg:text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Quick Actions</h3>
+                        <div class="grid grid-cols-2 gap-2 lg:gap-3">
+                            <button onclick="showSection('products')" class="flex items-center gap-1 lg:gap-2 p-2 lg:p-3 bg-primary text-white rounded-lg hover:bg-primary-light text-xs lg:text-sm">
+                                <span class="material-icons text-sm lg:text-lg">add</span>
+                                Add Wig
+                            </button>
+                            <button onclick="showSection('videos')" class="flex items-center gap-1 lg:gap-2 p-2 lg:p-3 bg-red-500 text-white rounded-lg hover:bg-red-600 text-xs lg:text-sm">
+                                <span class="material-icons text-sm lg:text-lg">video_call</span>
+                                Upload Video
+                            </button>
+                            <button onclick="showSection('gallery')" class="flex items-center gap-1 lg:gap-2 p-2 lg:p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 text-xs lg:text-sm">
+                                <span class="material-icons text-sm lg:text-lg">add_photo_alternate</span>
+                                Add Gallery Image
+                            </button>
+                            <button onclick="showSection('bookings')" class="flex items-center gap-1 lg:gap-2 p-2 lg:p-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 text-xs lg:text-sm">
+                                <span class="material-icons text-sm lg:text-lg">shopping_bag</span>
+                                View Bookings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products/Wigs Section -->
+            <div id="products-section" class="section hidden">
+                <div class="mb-6 lg:mb-8">
+                    <h1 class="text-2xl lg:text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-2">Wigs & Products</h1>
+                    <button onclick="openProductModal()" class="bg-primary text-white px-3 lg:px-4 py-2 rounded-lg hover:bg-primary-light text-sm lg:text-base">
+                        <span class="material-icons inline mr-1 lg:mr-2 text-sm lg:text-base">add</span>
+                        Add New Product
+                    </button>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 lg:p-6">
+                    <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+                        <p class="text-gray-500 dark:text-gray-400 text-center py-8 col-span-full">No products found</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Videos Section -->
+            <div id="videos-section" class="section hidden">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-2">Videos</h1>
+                    <button onclick="openVideoModal()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-light">
+                        <span class="material-icons inline mr-2">video_call</span>
+                        Upload Video
+                    </button>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                    <div id="videosGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <p class="text-gray-500 dark:text-gray-400 text-center py-8 col-span-full">No videos found</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gallery Section -->
+            <div id="gallery-section" class="section hidden">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-2">Gallery</h1>
+                    <button onclick="openGalleryModal()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-light">
+                        <span class="material-icons inline mr-2">add_photo_alternate</span>
+                        Add Images
+                    </button>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                    <div id="galleryGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <p class="text-gray-500 dark:text-gray-400 text-center py-8 col-span-full">No images found</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Services Section -->
+            <div id="services-section" class="section hidden">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-2">Services</h1>
+                    <button onclick="openServiceModal()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-light">
+                        <span class="material-icons inline mr-2">add</span>
+                        Add Service
+                    </button>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                    <div id="servicesList" class="space-y-4">
+                        <p class="text-gray-500 dark:text-gray-400 text-center py-8">No services found</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bookings Section -->
+            <div id="bookings-section" class="section hidden">
+                <div class="mb-8">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-2">Bookings</h1>
+                        <button onclick="deleteAllBookings()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 flex items-center gap-2">
+                            <span class="material-icons text-sm">delete_sweep</span>
+                            Delete All
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                    <div class="p-6">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b border-gray-200 dark:border-gray-700">
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Customer</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Phone</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Service</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Date</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Status</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bookingsTable">
+                                    <tr>
+                                        <td colspan="6" class="text-center py-8 text-gray-500 dark:text-gray-400">No bookings found</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Section -->
+            <div id="profile-section" class="section hidden">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-2">Admin Profile</h1>
+                    <button onclick="openProfileModal()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-light">
+                        <span class="material-icons inline mr-2">edit</span>
+                        Edit Profile
+                    </button>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 max-w-2xl">
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-6">
+                            <div class="relative">
+                                <div id="profilePhotoContainer" class="w-20 h-20 bg-primary rounded-full flex items-center justify-center overflow-hidden">
+                                    <span id="profilePhotoPlaceholder" class="material-icons text-white text-3xl">person</span>
+                                    <img id="profilePhoto" class="w-full h-full object-cover hidden" alt="Profile">
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200" id="displayName">Admin</h3>
+                                <p class="text-gray-600 dark:text-gray-400" id="displayEmail">admin@example.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Login Method</label>
+                                    <p id="loginMethod" class="text-gray-600 dark:text-gray-400">Email & Password</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Last Login</label>
+                                    <p id="lastLogin" class="text-gray-600 dark:text-gray-400">Just now</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+    <script>
+        const AUTH0_CLIENT_ID = 'gtsyHwdN37OnhgHl7wypSrCLVpblQ9s6';
+        const AUTH0_DOMAIN = 'dev-i5b08jbmyiyg4g8s.us.auth0.com';
+        
+        let auth0Client;
+        let products = JSON.parse(localStorage.getItem('products') || '[]');
+        let videos = JSON.parse(localStorage.getItem('videos') || '[]');
+        let gallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+        let bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+        let services = JSON.parse(localStorage.getItem('services') || '[]');
+
+        window.addEventListener('load', async () => {
+            await initAuth();
+            loadDashboardData();
+            await loadProfile();
+        });
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+            const icon = type === 'success' ? 'check_circle' : type === 'error' ? 'error' : 'info';
+            
+            toast.className = `${bgColor} text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 transform translate-x-full transition-transform duration-300 min-w-80`;
+            toast.innerHTML = `
+                <span class="material-icons text-sm">${icon}</span>
+                <span class="flex-1">${message}</span>
+                <button onclick="this.parentElement.remove()" class="material-icons text-sm hover:bg-white/20 rounded p-1">close</button>
+            `;
+            
+            document.getElementById('toastContainer').appendChild(toast);
+            
+            setTimeout(() => toast.classList.remove('translate-x-full'), 100);
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        async function initAuth() {
+            try {
+                // Check session storage first
+                const localAuth = sessionStorage.getItem('adminAuthenticated');
+                const loginTime = parseInt(sessionStorage.getItem('adminLoginTime') || '0');
+                const currentTime = Date.now();
+                const sessionDuration = 2 * 60 * 60 * 1000; // 2 hours
+                
+                if (localAuth === 'true' && (currentTime - loginTime < sessionDuration)) {
+                    const userData = JSON.parse(sessionStorage.getItem('adminData') || '{}');
+                    document.getElementById('userName').textContent = userData.fullName || userData.name || 'Admin';
+                    document.getElementById('displayName').textContent = userData.fullName || userData.name || 'Admin';
+                    document.getElementById('displayEmail').textContent = userData.email || 'admin@example.com';
+                    document.getElementById('loginMethod').textContent = userData.provider === 'google' ? 'Google Account' : 'Email & Password';
+                    return; // Successfully authenticated
+                }
+                
+                // Try Auth0 authentication
+                auth0Client = await auth0.createAuth0Client({
+                    domain: AUTH0_DOMAIN,
+                    clientId: AUTH0_CLIENT_ID,
+                    authorizationParams: {
+                        redirect_uri: window.location.origin + '/admin/dashboard.html'
+                    }
+                });
+
+                if (window.location.search.includes('code=')) {
+                    await auth0Client.handleRedirectCallback();
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+
+                const isAuthenticated = await auth0Client.isAuthenticated();
+                
+                if (isAuthenticated) {
+                    const user = await auth0Client.getUser();
+                    document.getElementById('userName').textContent = user.name || user.email;
+                    document.getElementById('displayName').textContent = user.name || 'Admin';
+                    document.getElementById('displayEmail').textContent = user.email || 'admin@example.com';
+                    document.getElementById('loginMethod').textContent = 'Google Account';
+                    
+                    // Set session storage for future visits
+                    sessionStorage.setItem('adminAuthenticated', 'true');
+                    sessionStorage.setItem('adminLoginTime', Date.now().toString());
+                    sessionStorage.setItem('adminData', JSON.stringify({
+                        ...user,
+                        provider: 'google'
+                    }));
+                } else {
+                    // No valid authentication found
+                    throw new Error('Not authenticated');
+                }
+            } catch (error) {
+                console.error('Auth error:', error);
+                // Clear any invalid session data
+                sessionStorage.removeItem('adminAuthenticated');
+                sessionStorage.removeItem('adminLoginTime');
+                sessionStorage.removeItem('adminData');
+                window.location.href = '/admin/login.html';
+            }
+        }
+
+        function loadDashboardData() {
+            loadProducts();
+            loadVideos();
+            loadGallery();
+            loadBookings();
+            loadServices();
+            updateStats();
+            loadRecentActivity();
+        }
+        
+        async function loadProducts() {
+            try {
+                const response = await fetch('/api/products');
+                const products = await response.json();
+                
+                const grid = document.getElementById('productsGrid');
+                if (products.length === 0) {
+                    grid.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-8 col-span-full">No products found</p>';
+                } else {
+                    grid.innerHTML = products.map(product => `
+                        <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
+                            <img src="${product.image_url || '/placeholder.jpg'}" alt="${product.name}" class="w-full h-32 object-cover rounded mb-3">
+                            <h4 class="font-semibold text-gray-800 dark:text-gray-200">${product.name}</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">${product.description || ''}</p>
+                            <p class="text-lg font-bold text-primary">₦${product.price}</p>
+                            <span class="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded mt-2">${product.category}</span>
+                            <div class="flex gap-2 mt-3">
+                                <button onclick="editProduct(${product.id})" class="flex-1 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600">
+                                    <span class="material-icons text-sm">edit</span> Edit
+                                </button>
+                                <button onclick="deleteProduct(${product.id})" class="flex-1 bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">
+                                    <span class="material-icons text-sm">delete</span> Delete
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading products:', error);
+            }
+        }
+        
+        async function updateStats() {
+            try {
+                const [products, videos, gallery, bookings] = await Promise.all([
+                    fetch('/api/products').then(r => r.json()),
+                    fetch('/api/videos').then(r => r.json()),
+                    fetch('/api/gallery').then(r => r.json()),
+                    fetch('/api/bookings').then(r => r.json())
+                ]);
+                
+                document.getElementById('totalProducts').textContent = products.length;
+                document.getElementById('totalVideos').textContent = videos.length;
+                document.getElementById('totalImages').textContent = gallery.length;
+                document.getElementById('totalBookings').textContent = bookings.length;
+            } catch (error) {
+                console.error('Error updating stats:', error);
+            }
+        }
+
+        function loadRecentActivity() {
+            const recentContainer = document.getElementById('recentActivity');
+            recentContainer.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-4">Loading recent activity...</p>';
+        }
+        
+        async function loadVideos() {
+            try {
+                const response = await fetch('/api/videos');
+                const videos = await response.json();
+                
+                const grid = document.getElementById('videosGrid');
+                if (videos.length === 0) {
+                    grid.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-8 col-span-full">No videos found</p>';
+                } else {
+                    grid.innerHTML = videos.map(video => `
+                        <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
+                            <div class="aspect-video bg-gray-200 rounded mb-3 overflow-hidden relative cursor-pointer" onclick="playVideo('${video.video_url}', '${video.title}')">
+                                ${video.video_url ? `
+                                    <video class="w-full h-full object-cover" muted>
+                                        <source src="${video.video_url}" type="video/mp4">
+                                    </video>
+                                    <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center hover:bg-opacity-50 transition-all">
+                                        <span class="material-icons text-white text-4xl">play_circle_filled</span>
+                                    </div>
+                                ` : `
+                                    <div class="w-full h-full flex items-center justify-center bg-gray-300">
+                                        <span class="material-icons text-gray-500 text-4xl">video_library</span>
+                                    </div>
+                                `}
+                            </div>
+                            <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-2">${video.title}</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">${video.description || 'No description'}</p>
+                            <div class="flex gap-2">
+                                <button onclick="editVideo(${video.id})" class="flex-1 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600 flex items-center justify-center gap-1">
+                                    <span class="material-icons text-sm">edit</span> Edit
+                                </button>
+                                <button onclick="deleteVideo(${video.id})" class="flex-1 bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 flex items-center justify-center gap-1">
+                                    <span class="material-icons text-sm">delete</span> Delete
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading videos:', error);
+            }
+        }
+        
+        async function loadGallery() {
+            try {
+                const response = await fetch('/api/gallery');
+                const gallery = await response.json();
+                
+                const grid = document.getElementById('galleryGrid');
+                if (gallery.length === 0) {
+                    grid.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-8 col-span-full">No images found</p>';
+                } else {
+                    grid.innerHTML = gallery.map(image => `
+                        <div class="bg-white dark:bg-gray-700 rounded-lg shadow overflow-hidden">
+                            <div class="aspect-square overflow-hidden cursor-pointer" onclick="viewImage('${image.image_url}', '${image.title}')">
+                                <img src="${image.image_url}" alt="${image.title}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                            </div>
+                            <div class="p-3">
+                                <h4 class="font-semibold text-gray-800 dark:text-gray-200 text-sm mb-1">${image.title}</h4>
+                                <span class="inline-block px-2 py-1 bg-primary/10 text-primary text-xs rounded">${image.category}</span>
+                                <div class="flex gap-1 mt-2">
+                                    <button onclick="deleteGalleryImage(${image.id})" class="flex-1 bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600">
+                                        <span class="material-icons text-xs">delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading gallery:', error);
+            }
+        }
+        
+        async function loadBookings() {
+            try {
+                const response = await fetch('/api/bookings');
+                const bookings = await response.json();
+                
+                const table = document.getElementById('bookingsTable');
+                if (bookings.length === 0) {
+                    table.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-500 dark:text-gray-400">No bookings found</td></tr>';
+                } else {
+                    table.innerHTML = bookings.map(booking => `
+                        <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <td class="py-3 px-4">
+                                <div>
+                                    <p class="font-semibold text-gray-800 dark:text-gray-200">${booking.customer_name}</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">${booking.customer_email || 'No email'}</p>
+                                </div>
+                            </td>
+                            <td class="py-3 px-4 text-gray-700 dark:text-gray-300">${booking.customer_phone}</td>
+                            <td class="py-3 px-4 text-gray-700 dark:text-gray-300">${booking.service_name || 'Unknown Service'}</td>
+                            <td class="py-3 px-4 text-gray-700 dark:text-gray-300">
+                                <div>
+                                    <p>${booking.booking_date}</p>
+                                    <p class="text-sm text-gray-500">${booking.booking_time}</p>
+                                </div>
+                            </td>
+                            <td class="py-3 px-4">
+                                <span class="px-2 py-1 rounded-full text-xs font-medium ${
+                                    booking.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                                    booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                    booking.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                                    'bg-gray-100 text-gray-800'
+                                }">
+                                    ${booking.status || 'pending'}
+                                </span>
+                            </td>
+                            <td class="py-3 px-4">
+                                <div class="flex gap-2">
+                                    <button onclick="updateBookingStatus(${booking.id}, 'confirmed')" class="bg-green-500 text-white px-2 py-1 rounded text-xs hover:bg-green-600">
+                                        Confirm
+                                    </button>
+                                    <button onclick="updateBookingStatus(${booking.id}, 'cancelled')" class="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+            }
+        }
+
+        async function loadServices() {
+            try {
+                const response = await fetch('/api/services');
+                const services = await response.json();
+                
+                const list = document.getElementById('servicesList');
+                if (services.length === 0) {
+                    list.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-8">No services found</p>';
+                } else {
+                    list.innerHTML = services.map(service => `
+                        <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow flex justify-between items-start">
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-1">${service.name}</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">${service.description || 'No description'}</p>
+                                <div class="flex items-center gap-4 text-sm">
+                                    <span class="font-bold text-primary">₦${service.price}</span>
+                                    ${service.duration ? `<span class="text-gray-500">${service.duration}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="flex gap-2 ml-4">
+                                <button onclick="editService(${service.id})" class="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600">
+                                    <span class="material-icons text-sm">edit</span>
+                                </button>
+                                <button onclick="deleteService(${service.id})" class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">
+                                    <span class="material-icons text-sm">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading services:', error);
+            }
+        }
+
+        function getActivityIcon(type) {
+            switch(type) {
+                case 'product': return 'inventory';
+                case 'video': return 'video_library';
+                case 'gallery': return 'photo_library';
+                case 'booking': return 'event';
+                default: return 'info';
+            }
+        }
+
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName + '-section').classList.remove('hidden');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('bg-primary', 'text-white');
+                item.classList.add('text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
+            });
+            
+            event.target.closest('.nav-item').classList.add('bg-primary', 'text-white');
+            event.target.closest('.nav-item').classList.remove('text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
+        }
+
+        function openProductModal() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto';
+            modal.innerHTML = `
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl max-w-md w-full mx-4 my-8 max-h-screen overflow-y-auto">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">Add New Product</h3>
+                    <form id="productForm">
+                        <div class="space-y-4">
+                            <input type="text" id="productName" placeholder="Product Name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <textarea id="productDescription" placeholder="Description" class="w-full p-3 border border-gray-300 rounded-lg h-20 focus:ring-2 focus:ring-primary focus:border-transparent"></textarea>
+                            <input type="number" id="productPrice" placeholder="Price" step="0.01" min="0" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Product Image (Optional)</label>
+                                <input type="file" id="productImage" accept="image/*" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <div id="imagePreview" class="hidden">
+                                    <img id="previewImg" class="w-full h-32 object-cover rounded-lg mt-2">
+                                </div>
+                            </div>
+                            
+                            <select id="productCategory" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="wig">Wig</option>
+                                <option value="hair-care">Hair Care</option>
+                                <option value="accessories">Accessories</option>
+                            </select>
+                        </div>
+                        <div class="flex gap-3 mt-6">
+                            <button type="submit" id="submitBtn" class="flex-1 bg-primary hover:bg-primary-light text-white py-2 px-4 rounded-lg transition-colors font-medium">Add Product</button>
+                            <button type="button" id="cancelBtn" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-lg transition-colors font-medium">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Image preview functionality
+            const imageInput = document.getElementById('productImage');
+            imageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('previewImg').src = e.target.result;
+                        document.getElementById('imagePreview').classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Cancel button
+            document.getElementById('cancelBtn').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            // Form submission
+            document.getElementById('productForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const submitBtn = document.getElementById('submitBtn');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Adding...';
+                submitBtn.disabled = true;
+                
+                try {
+                    let imageUrl = '';
+                    const imageFile = document.getElementById('productImage').files[0];
+                    
+                    // Upload image if selected
+                    if (imageFile) {
+                        try {
+                            const formData = new FormData();
+                            formData.append('image', imageFile);
+                            
+                            const uploadResponse = await fetch('/api/upload', {
+                                method: 'POST',
+                                body: formData
+                            });
+                            
+                            if (uploadResponse.ok) {
+                                const uploadResult = await uploadResponse.json();
+                                imageUrl = uploadResult.url;
+                            } else {
+                                console.warn('Image upload failed, proceeding without image');
+                                imageUrl = ''; // Continue without image
+                            }
+                        } catch (uploadError) {
+                            console.warn('Image upload error, proceeding without image:', uploadError);
+                            imageUrl = ''; // Continue without image
+                        }
+                    }
+                    
+                    // Create product
+                    const productData = {
+                        name: document.getElementById('productName').value.trim(),
+                        description: document.getElementById('productDescription').value.trim(),
+                        price: parseFloat(document.getElementById('productPrice').value),
+                        image_url: imageUrl,
+                        category: document.getElementById('productCategory').value
+                    };
+                    
+                    const response = await fetch('/api/products', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(productData)
+                    });
+                    
+                    if (response.ok) {
+                        document.body.removeChild(modal);
+                        await loadProducts();
+                        await updateStats();
+                        showToast('Product added successfully!');
+                    } else {
+                        throw new Error('Failed to add product');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    showToast('Error adding product: ' + error.message, 'error');
+                } finally {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+
+        function openVideoModal() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto';
+            modal.innerHTML = `
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl max-w-md w-full mx-4 my-8 max-h-screen overflow-y-auto">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">Upload New Video</h3>
+                    <form id="videoForm">
+                        <div class="space-y-4">
+                            <input type="text" id="videoTitle" placeholder="Video Title" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <textarea id="videoDescription" placeholder="Description" class="w-full p-3 border border-gray-300 rounded-lg h-20 focus:ring-2 focus:ring-primary focus:border-transparent"></textarea>
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Video File</label>
+                                <input type="file" id="videoFile" accept="video/*" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <p class="text-xs text-gray-500">Max file size: 100MB. Supported formats: MP4, MOV, AVI, etc.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3 mt-6">
+                            <button type="submit" id="videoSubmitBtn" class="flex-1 bg-primary hover:bg-primary-light text-white py-2 px-4 rounded-lg transition-colors font-medium">Upload Video</button>
+                            <button type="button" id="videoCancelBtn" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-lg transition-colors font-medium">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            document.getElementById('videoCancelBtn').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            document.getElementById('videoForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const submitBtn = document.getElementById('videoSubmitBtn');
+                submitBtn.textContent = 'Uploading...';
+                submitBtn.disabled = true;
+                
+                try {
+                    const formData = new FormData();
+                    formData.append('title', document.getElementById('videoTitle').value.trim());
+                    formData.append('description', document.getElementById('videoDescription').value.trim());
+                    formData.append('video', document.getElementById('videoFile').files[0]);
+                    
+                    const response = await fetch('/api/videos', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (response.ok) {
+                        document.body.removeChild(modal);
+                        await loadVideos();
+                        await updateStats();
+                        showToast('Video uploaded successfully!');
+                    } else {
+                        throw new Error('Failed to upload video');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showToast('Error uploading video: ' + error.message, 'error');
+                } finally {
+                    submitBtn.textContent = 'Upload Video';
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+
+        function openGalleryModal() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto';
+            modal.innerHTML = `
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl max-w-md w-full mx-4 my-8 max-h-screen overflow-y-auto">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">Add Gallery Image</h3>
+                    <form id="galleryForm">
+                        <div class="space-y-4">
+                            <input type="text" id="galleryTitle" placeholder="Image Title" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Image File</label>
+                                <input type="file" id="galleryImage" accept="image/*" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <div id="galleryImagePreview" class="hidden">
+                                    <img id="galleryPreviewImg" class="w-full h-32 object-cover rounded-lg mt-2">
+                                </div>
+                            </div>
+                            <select id="galleryCategory" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="wig-installation">Wig Installation</option>
+                                <option value="revamping">Revamping</option>
+                                <option value="coloring">Coloring</option>
+                                <option value="styling">Styling</option>
+                            </select>
+                        </div>
+                        <div class="flex gap-3 mt-6">
+                            <button type="submit" id="gallerySubmitBtn" class="flex-1 bg-primary hover:bg-primary-light text-white py-2 px-4 rounded-lg transition-colors font-medium">Add Image</button>
+                            <button type="button" id="galleryCancelBtn" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-lg transition-colors font-medium">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Image preview
+            document.getElementById('galleryImage').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('galleryPreviewImg').src = e.target.result;
+                        document.getElementById('galleryImagePreview').classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            document.getElementById('galleryCancelBtn').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            document.getElementById('galleryForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const submitBtn = document.getElementById('gallerySubmitBtn');
+                submitBtn.textContent = 'Uploading...';
+                submitBtn.disabled = true;
+                
+                try {
+                    const formData = new FormData();
+                    formData.append('title', document.getElementById('galleryTitle').value.trim());
+                    formData.append('category', document.getElementById('galleryCategory').value);
+                    formData.append('image', document.getElementById('galleryImage').files[0]);
+                    
+                    const response = await fetch('/api/gallery', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (response.ok) {
+                        document.body.removeChild(modal);
+                        await loadGallery();
+                        await updateStats();
+                        showToast('Image uploaded successfully!');
+                    } else {
+                        throw new Error('Failed to upload image');
+                    }
+                } catch (error) {
+                    showToast('Error uploading image: ' + error.message, 'error');
+                } finally {
+                    submitBtn.textContent = 'Add Image';
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+
+        function openServiceModal() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto';
+            modal.innerHTML = `
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl max-w-md w-full mx-4 my-8 max-h-screen overflow-y-auto">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">Add New Service</h3>
+                    <form id="serviceForm">
+                        <div class="space-y-4">
+                            <input type="text" id="serviceName" placeholder="Service Name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <textarea id="serviceDescription" placeholder="Description" class="w-full p-3 border border-gray-300 rounded-lg h-20 focus:ring-2 focus:ring-primary focus:border-transparent"></textarea>
+                            <input type="number" id="servicePrice" placeholder="Price (₦)" step="0.01" min="0" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <input type="text" id="serviceDuration" placeholder="Duration (e.g., 2 hours)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        <div class="flex gap-3 mt-6">
+                            <button type="submit" id="serviceSubmitBtn" class="flex-1 bg-primary hover:bg-primary-light text-white py-2 px-4 rounded-lg transition-colors font-medium">Add Service</button>
+                            <button type="button" id="serviceCancelBtn" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-lg transition-colors font-medium">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            document.getElementById('serviceCancelBtn').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            document.getElementById('serviceForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const submitBtn = document.getElementById('serviceSubmitBtn');
+                submitBtn.textContent = 'Adding...';
+                submitBtn.disabled = true;
+                
+                try {
+                    const serviceData = {
+                        name: document.getElementById('serviceName').value.trim(),
+                        description: document.getElementById('serviceDescription').value.trim(),
+                        price: parseFloat(document.getElementById('servicePrice').value),
+                        duration: document.getElementById('serviceDuration').value.trim()
+                    };
+                    
+                    const response = await fetch('/api/services', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(serviceData)
+                    });
+                    
+                    if (response.ok) {
+                        document.body.removeChild(modal);
+                        await loadServices();
+                        await updateStats();
+                        showToast('Service added successfully!');
+                    } else {
+                        throw new Error('Failed to add service');
+                    }
+                } catch (error) {
+                    showToast('Error adding service: ' + error.message, 'error');
+                } finally {
+                    submitBtn.textContent = 'Add Service';
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+
+        async function editProduct(productId) {
+            try {
+                const response = await fetch('/api/products');
+                const products = await response.json();
+                const product = products.find(p => p.id === productId);
+                
+                if (!product) {
+                    showToast('Product not found', 'error');
+                    return;
+                }
+                
+                const modal = document.createElement('div');
+                modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto';
+                modal.innerHTML = `
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl max-w-md w-full mx-4 my-8 max-h-screen overflow-y-auto">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">Edit Product</h3>
+                        <form id="editProductForm">
+                            <div class="space-y-4">
+                                <input type="text" id="editProductName" value="${product.name}" placeholder="Product Name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <textarea id="editProductDescription" placeholder="Description" class="w-full p-3 border border-gray-300 rounded-lg h-20 focus:ring-2 focus:ring-primary focus:border-transparent">${product.description || ''}</textarea>
+                                <input type="number" id="editProductPrice" value="${product.price}" placeholder="Price" step="0.01" min="0" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Product Image (Optional)</label>
+                                    <input type="file" id="editProductImage" accept="image/*" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    ${product.image_url ? `<div class="mt-2"><img src="${product.image_url}" class="w-full h-32 object-cover rounded-lg"><p class="text-sm text-gray-500 mt-1">Current image</p></div>` : ''}
+                                    <div id="editImagePreview" class="hidden">
+                                        <img id="editPreviewImg" class="w-full h-32 object-cover rounded-lg mt-2">
+                                    </div>
+                                </div>
+                                
+                                <select id="editProductCategory" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <option value="wig" ${product.category === 'wig' ? 'selected' : ''}>Wig</option>
+                                    <option value="hair-care" ${product.category === 'hair-care' ? 'selected' : ''}>Hair Care</option>
+                                    <option value="accessories" ${product.category === 'accessories' ? 'selected' : ''}>Accessories</option>
+                                </select>
+                            </div>
+                            <div class="flex gap-3 mt-6">
+                                <button type="submit" id="editSubmitBtn" class="flex-1 bg-primary hover:bg-primary-light text-white py-2 px-4 rounded-lg transition-colors font-medium">Update Product</button>
+                                <button type="button" id="editCancelBtn" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-lg transition-colors font-medium">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                
+                // Image preview functionality
+                const imageInput = document.getElementById('editProductImage');
+                imageInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            document.getElementById('editPreviewImg').src = e.target.result;
+                            document.getElementById('editImagePreview').classList.remove('hidden');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+                
+                // Cancel button
+                document.getElementById('editCancelBtn').addEventListener('click', () => {
+                    document.body.removeChild(modal);
+                });
+                
+                // Form submission
+                document.getElementById('editProductForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const submitBtn = document.getElementById('editSubmitBtn');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.textContent = 'Updating...';
+                    submitBtn.disabled = true;
+                    
+                    try {
+                        let imageUrl = product.image_url; // Keep existing image by default
+                        const imageFile = document.getElementById('editProductImage').files[0];
+                        
+                        // Upload new image if selected
+                        if (imageFile) {
+                            try {
+                                const formData = new FormData();
+                                formData.append('image', imageFile);
+                                
+                                const uploadResponse = await fetch('/api/upload', {
+                                    method: 'POST',
+                                    body: formData
+                                });
+                                
+                                if (uploadResponse.ok) {
+                                    const uploadResult = await uploadResponse.json();
+                                    imageUrl = uploadResult.url;
+                                }
+                            } catch (uploadError) {
+                                console.warn('Image upload error:', uploadError);
+                            }
+                        }
+                        
+                        // Update product
+                        const productData = {
+                            name: document.getElementById('editProductName').value.trim(),
+                            description: document.getElementById('editProductDescription').value.trim(),
+                            price: parseFloat(document.getElementById('editProductPrice').value),
+                            image_url: imageUrl,
+                            category: document.getElementById('editProductCategory').value
+                        };
+                        
+                        const response = await fetch(`/api/products/${productId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(productData)
+                        });
+                        
+                        if (response.ok) {
+                            document.body.removeChild(modal);
+                            await loadProducts();
+                            showToast('Product updated successfully!');
+                        } else {
+                            throw new Error('Failed to update product');
+                        }
+                        
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showToast('Error updating product: ' + error.message, 'error');
+                    } finally {
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error loading product data', 'error');
+            }
+        }
+
+        async function deleteProduct(productId) {
+            if (!confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/products/${productId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    await loadProducts();
+                    await updateStats();
+                    showToast('Product deleted successfully!');
+                } else {
+                    throw new Error('Failed to delete product');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error deleting product: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteVideo(videoId) {
+            if (!confirm('Are you sure you want to delete this video?')) return;
+            
+            try {
+                const response = await fetch(`/api/videos/${videoId}`, { method: 'DELETE' });
+                if (response.ok) {
+                    await loadVideos();
+                    await updateStats();
+                    showToast('Video deleted successfully!');
+                } else {
+                    throw new Error('Failed to delete video');
+                }
+            } catch (error) {
+                showToast('Error deleting video: ' + error.message, 'error');
+            }
+        }
+
+        function editVideo(videoId) {
+            fetch('/api/videos')
+                .then(response => response.json())
+                .then(videos => {
+                    const video = videos.find(v => v.id === videoId);
+                    if (!video) {
+                        showToast('Video not found', 'error');
+                        return;
+                    }
+                    
+                    const modal = document.createElement('div');
+                    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto';
+                    modal.innerHTML = `
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl max-w-md w-full mx-4 my-8 max-h-screen overflow-y-auto">
+                            <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">Edit Video</h3>
+                            <form id="editVideoForm">
+                                <div class="space-y-4">
+                                    <input type="text" id="editVideoTitle" value="${video.title}" placeholder="Video Title" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <textarea id="editVideoDescription" placeholder="Description" class="w-full p-3 border border-gray-300 rounded-lg h-20 focus:ring-2 focus:ring-primary focus:border-transparent">${video.description || ''}</textarea>
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Replace Video File (Optional)</label>
+                                        <input type="file" id="editVideoFile" accept="video/*" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                        <p class="text-xs text-gray-500">Leave empty to keep current video</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-3 mt-6">
+                                    <button type="submit" id="editVideoSubmitBtn" class="flex-1 bg-primary hover:bg-primary-light text-white py-2 px-4 rounded-lg transition-colors font-medium">Update Video</button>
+                                    <button type="button" id="editVideoCancelBtn" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-lg transition-colors font-medium">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    `;
+                    document.body.appendChild(modal);
+                    
+                    document.getElementById('editVideoCancelBtn').addEventListener('click', () => {
+                        document.body.removeChild(modal);
+                    });
+                    
+                    document.getElementById('editVideoForm').addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        
+                        const submitBtn = document.getElementById('editVideoSubmitBtn');
+                        submitBtn.textContent = 'Updating...';
+                        submitBtn.disabled = true;
+                        
+                        try {
+                            const formData = new FormData();
+                            formData.append('title', document.getElementById('editVideoTitle').value.trim());
+                            formData.append('description', document.getElementById('editVideoDescription').value.trim());
+                            
+                            const videoFile = document.getElementById('editVideoFile').files[0];
+                            if (videoFile) {
+                                formData.append('video', videoFile);
+                            }
+                            
+                            const response = await fetch(`/api/videos/${videoId}`, {
+                                method: 'PUT',
+                                body: formData
+                            });
+                            
+                            if (response.ok) {
+                                document.body.removeChild(modal);
+                                await loadVideos();
+                                showToast('Video updated successfully!');
+                            } else {
+                                throw new Error('Failed to update video');
+                            }
+                        } catch (error) {
+                            showToast('Error updating video: ' + error.message, 'error');
+                        } finally {
+                            submitBtn.textContent = 'Update Video';
+                            submitBtn.disabled = false;
+                        }
+                    });
+                })
+                .catch(error => {
+                    showToast('Error loading video data', 'error');
+                });
+        }
+
+        function playVideo(videoUrl, title) {
+            if (!videoUrl) {
+                showToast('No video file available', 'error');
+                return;
+            }
+            
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-screen overflow-hidden">
+                    <div class="flex justify-between items-center p-4 border-b">
+                        <h3 class="text-lg font-semibold">${title || 'Video Player'}</h3>
+                        <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
+                            <span class="material-icons">close</span>
+                        </button>
+                    </div>
+                    <div class="aspect-video">
+                        <video controls class="w-full h-full" autoplay>
+                            <source src="${videoUrl}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function viewImage(imageUrl, title) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-screen overflow-hidden">
+                    <div class="flex justify-between items-center p-4 border-b">
+                        <h3 class="text-lg font-semibold">${title || 'Image Viewer'}</h3>
+                        <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
+                            <span class="material-icons">close</span>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <img src="${imageUrl}" alt="${title}" class="w-full h-auto max-h-96 object-contain mx-auto">
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        async function deleteGalleryImage(imageId) {
+            if (!confirm('Are you sure you want to delete this image?')) return;
+            
+            try {
+                const response = await fetch(`/api/gallery/${imageId}`, { method: 'DELETE' });
+                if (response.ok) {
+                    await loadGallery();
+                    await updateStats();
+                    showToast('Image deleted successfully!');
+                } else {
+                    throw new Error('Failed to delete image');
+                }
+            } catch (error) {
+                showToast('Error deleting image: ' + error.message, 'error');
+            }
+        }
+
+        function editService(serviceId) {
+            showToast('Edit service functionality coming soon!', 'info');
+        }
+
+        async function deleteService(serviceId) {
+            if (!confirm('Are you sure you want to delete this service?')) return;
+            
+            try {
+                const response = await fetch(`/api/services/${serviceId}`, { method: 'DELETE' });
+                if (response.ok) {
+                    await loadServices();
+                    showToast('Service deleted successfully!');
+                } else {
+                    throw new Error('Failed to delete service');
+                }
+            } catch (error) {
+                showToast('Error deleting service: ' + error.message, 'error');
+            }
+        }
+
+        async function updateBookingStatus(bookingId, status) {
+            try {
+                const response = await fetch(`/api/bookings/${bookingId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                
+                if (response.ok) {
+                    await loadBookings();
+                    showToast(`Booking ${status} successfully!`);
+                } else {
+                    throw new Error('Failed to update booking');
+                }
+            } catch (error) {
+                showToast('Error updating booking: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteAllBookings() {
+            if (!confirm('Are you sure you want to delete ALL bookings? This action cannot be undone.')) return;
+            
+            try {
+                const response = await fetch('/api/bookings/all', { method: 'DELETE' });
+                if (response.ok) {
+                    await loadBookings();
+                    await updateStats();
+                    showToast('All bookings deleted successfully!');
+                } else {
+                    throw new Error('Failed to delete all bookings');
+                }
+            } catch (error) {
+                showToast('Error deleting bookings: ' + error.message, 'error');
+            }
+        }
+
+        async function logout() {
+            try {
+                if (auth0Client) {
+                    await auth0Client.logout({
+                        logoutParams: {
+                            returnTo: window.location.origin + '/admin/login.html'
+                        }
+                    });
+                } else {
+                    sessionStorage.clear();
+                    window.location.href = '/admin/login.html';
+                }
+            } catch (error) {
+                sessionStorage.clear();
+                window.location.href = '/admin/login.html';
+            }
+        }
+
+        // Profile Management Functions
+        let currentProfile = { name: 'Admin', email: 'admin@example.com', photo_url: '' };
+        
+        async function loadProfile() {
+            try {
+                const userData = JSON.parse(sessionStorage.getItem('adminData') || '{}');
+                const userId = userData.sub || userData.email || 'admin';
+                
+                const response = await fetch('/api/profiles');
+                const profiles = await response.json();
+                const profile = profiles.find(p => p.userId === userId);
+                
+                if (profile) {
+                    currentProfile = profile;
+                } else {
+                    currentProfile = {
+                        userId,
+                        name: userData.name || userData.fullName || 'Admin',
+                        email: userData.email || 'admin@example.com',
+                        photo_url: ''
+                    };
+                }
+                updateProfileDisplay();
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+        
+        function openProfileModal() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl max-w-md w-full">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">Edit Profile</h3>
+                    <form id="profileForm">
+                        <div class="space-y-4">
+                            <div class="text-center">
+                                <div class="relative inline-block">
+                                    <div id="modalPhotoContainer" class="w-20 h-20 bg-primary rounded-full flex items-center justify-center overflow-hidden mx-auto">
+                                        <span id="modalPhotoPlaceholder" class="material-icons text-white text-3xl">person</span>
+                                        <img id="modalProfilePhoto" class="w-full h-full object-cover hidden" alt="Profile">
+                                    </div>
+                                    <label for="profilePhotoInput" class="absolute -bottom-1 -right-1 bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-blue-600">
+                                        <span class="material-icons text-sm">camera_alt</span>
+                                    </label>
+                                </div>
+                                <input type="file" id="profilePhotoInput" accept="image/*" class="hidden">
+                                <button type="button" id="deletePhotoModalBtn" onclick="deletePhoto()" class="mt-2 text-red-500 text-sm hover:text-red-700 hidden">Delete Photo</button>
+                            </div>
+                            
+                            <input type="text" id="profileNameInput" placeholder="Full Name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        <div class="flex gap-3 mt-6">
+                            <button type="submit" id="profileSubmitBtn" class="flex-1 bg-primary hover:bg-primary-light text-white py-2 px-4 rounded-lg transition-colors font-medium">Save</button>
+                            <button type="button" onclick="closeModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-lg transition-colors font-medium">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Populate current data
+            document.getElementById('profileNameInput').value = currentProfile.name || '';
+            if (currentProfile.photo_url) {
+                document.getElementById('modalProfilePhoto').src = currentProfile.photo_url;
+                document.getElementById('modalProfilePhoto').classList.remove('hidden');
+                document.getElementById('modalPhotoPlaceholder').classList.add('hidden');
+                document.getElementById('deletePhotoModalBtn').classList.remove('hidden');
+            }
+            
+            // Photo upload preview
+            document.getElementById('profilePhotoInput').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('modalProfilePhoto').src = e.target.result;
+                        document.getElementById('modalProfilePhoto').classList.remove('hidden');
+                        document.getElementById('modalPhotoPlaceholder').classList.add('hidden');
+                        document.getElementById('deletePhotoModalBtn').classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Form submission
+            document.getElementById('profileForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const submitBtn = document.getElementById('profileSubmitBtn');
+                submitBtn.textContent = 'Saving...';
+                submitBtn.disabled = true;
+                
+                try {
+                    const formData = new FormData();
+                    const userData = JSON.parse(sessionStorage.getItem('adminData') || '{}');
+                    
+                    formData.append('userId', userData.sub || userData.email || 'admin');
+                    formData.append('name', document.getElementById('profileNameInput').value.trim());
+                    formData.append('email', currentProfile.email);
+                    
+                    const photoFile = document.getElementById('profilePhotoInput').files[0];
+                    if (photoFile) {
+                        formData.append('photo', photoFile);
+                    } else if (currentProfile.deletePhoto) {
+                        formData.append('deletePhoto', 'true');
+                    }
+                    
+                    const response = await fetch('/api/profile', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        currentProfile = result.profile;
+                        updateProfileDisplay();
+                        closeModal();
+                        showToast('Profile updated successfully!');
+                    } else {
+                        throw new Error('Failed to update profile');
+                    }
+                } catch (error) {
+                    showToast('Error updating profile: ' + error.message, 'error');
+                } finally {
+                    submitBtn.textContent = 'Save';
+                    submitBtn.disabled = false;
+                }
+            });
+            
+            window.closeModal = () => {
+                document.body.removeChild(modal);
+            };
+            
+            window.deletePhoto = () => {
+                document.getElementById('modalProfilePhoto').classList.add('hidden');
+                document.getElementById('modalPhotoPlaceholder').classList.remove('hidden');
+                document.getElementById('deletePhotoModalBtn').classList.add('hidden');
+                document.getElementById('profilePhotoInput').value = '';
+                // Mark for deletion on save
+                currentProfile.deletePhoto = true;
+            };
+        }
+        
+        function updateProfileDisplay() {
+            document.getElementById('displayName').textContent = currentProfile.name || 'Admin';
+            document.getElementById('displayEmail').textContent = currentProfile.email || 'admin@example.com';
+            document.getElementById('userName').textContent = currentProfile.name || 'Admin';
+            
+            const photoImg = document.getElementById('profilePhoto');
+            const photoPlaceholder = document.getElementById('profilePhotoPlaceholder');
+            const sidebarPhoto = document.getElementById('sidebarPhoto');
+            const sidebarPlaceholder = document.getElementById('sidebarPhotoPlaceholder');
+            
+            if (currentProfile.photo_url) {
+                photoImg.src = currentProfile.photo_url;
+                photoImg.classList.remove('hidden');
+                photoPlaceholder.classList.add('hidden');
+                
+                sidebarPhoto.src = currentProfile.photo_url;
+                sidebarPhoto.classList.remove('hidden');
+                sidebarPlaceholder.classList.add('hidden');
+            } else {
+                photoImg.classList.add('hidden');
+                photoPlaceholder.classList.remove('hidden');
+                
+                sidebarPhoto.classList.add('hidden');
+                sidebarPlaceholder.classList.remove('hidden');
+            }
+        }
+
+        // Mobile menu functionality
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth < 1024 && !sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                sidebar.classList.add('-translate-x-full');
+            }
+        });
+        
+        // Close sidebar on mobile when nav item is clicked
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth < 1024) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
