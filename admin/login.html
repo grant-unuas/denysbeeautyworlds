@@ -124,17 +124,54 @@
         let auth0Client;
 
         window.addEventListener('load', async () => {
+            // Check if already authenticated via Google/Auth0
             try {
+                const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                    ? window.location.origin 
+                    : 'https://denysbeautyworld.up.railway.app';
+                
                 auth0Client = await auth0.createAuth0Client({
                     domain: ADMIN_CONFIG.AUTH0_DOMAIN,
                     clientId: ADMIN_CONFIG.AUTH0_CLIENT_ID,
                     authorizationParams: {
-                        redirect_uri: window.location.origin + '/admin/callback.html'
+                        redirect_uri: baseUrl + '/admin/callback.html'
                     }
                 });
+                
+                // Check if user is authenticated with Auth0
+                const isAuth0Authenticated = await auth0Client.isAuthenticated();
+                if (isAuth0Authenticated) {
+                    const user = await auth0Client.getUser();
+                    if (user && user.email && isAuthorizedEmail(user.email)) {
+                        // Set session and redirect to dashboard
+                        const adminData = {
+                            fullName: user.name || user.email,
+                            email: user.email,
+                            provider: 'google'
+                        };
+                        setSession(adminData);
+                        window.location.href = 'dashboard.html';
+                        return;
+                    }
+                }
+                
                 console.log('Auth0 client initialized successfully');
             } catch (error) {
                 console.error('Auth0 initialization error:', error);
+            }
+            
+            // Check if already logged in via session
+            if (sessionStorage.getItem('adminAuthenticated') === 'true') {
+                const loginTime = parseInt(sessionStorage.getItem('adminLoginTime'));
+                const currentTime = Date.now();
+                
+                if (currentTime - loginTime < ADMIN_CONFIG.SESSION_TIMEOUT) {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    sessionStorage.removeItem('adminAuthenticated');
+                    sessionStorage.removeItem('adminLoginTime');
+                    sessionStorage.removeItem('adminData');
+                }
             }
         });
 
@@ -244,19 +281,7 @@
             }
         }
 
-        // Check if already logged in
-        if (sessionStorage.getItem('adminAuthenticated') === 'true') {
-            const loginTime = parseInt(sessionStorage.getItem('adminLoginTime'));
-            const currentTime = Date.now();
-            
-            if (currentTime - loginTime < ADMIN_CONFIG.SESSION_TIMEOUT) {
-                window.location.href = 'dashboard.html';
-            } else {
-                sessionStorage.removeItem('adminAuthenticated');
-                sessionStorage.removeItem('adminLoginTime');
-                sessionStorage.removeItem('adminData');
-            }
-        }
+
     </script>
 </body>
 </html>
