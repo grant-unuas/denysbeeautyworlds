@@ -49,11 +49,15 @@
                 }
 
                 // Check if email is authorized
+                console.log('User email:', user.email);
+                console.log('Authorized emails:', ADMIN_CONFIG.AUTHORIZED_EMAILS);
+                console.log('Is authorized:', isAuthorizedEmail(user.email));
+                
                 if (!isAuthorizedEmail(user.email)) {
-                    showMessage('❌ Access Denied: Your email is not authorized for admin access.', 'error');
+                    showMessage(`❌ Access Denied: Email "${user.email}" is not authorized. Authorized emails: ${ADMIN_CONFIG.AUTHORIZED_EMAILS.join(', ')}`, 'error');
                     setTimeout(() => {
                         window.location.href = 'login.html';
-                    }, 3000);
+                    }, 5000);
                     return;
                 }
 
