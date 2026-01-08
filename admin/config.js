@@ -2,11 +2,10 @@
 const ADMIN_CONFIG = {
     // Only these Google accounts can access admin panel
     AUTHORIZED_EMAILS: [
-        'grantunuas@gmail.com',  // Admin email
-        'grantunua@gmail.com',   // Salon owner email  
-        'grant.unua@gmail.com',  // Alternative format
-        'grantunua.s@gmail.com', // Another variation
-        // Add more authorized emails here
+        'grantunuas@gmail.com',
+        'grantunua@gmail.com',
+        'grant.unua@gmail.com',
+        'grantunua.s@gmail.com'
     ],
     
     // Auth0 Configuration
@@ -22,8 +21,6 @@ const ADMIN_CONFIG = {
 // Security functions
 function isAuthorizedEmail(email) {
     const normalizedEmail = email.toLowerCase().trim();
-    console.log('Checking email:', normalizedEmail);
-    console.log('Against authorized emails:', ADMIN_CONFIG.AUTHORIZED_EMAILS);
     return ADMIN_CONFIG.AUTHORIZED_EMAILS.includes(normalizedEmail);
 }
 
