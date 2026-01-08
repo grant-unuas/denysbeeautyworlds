@@ -97,10 +97,10 @@
                 sessionStorage.setItem('adminLoginTime', Date.now().toString());
                 sessionStorage.setItem('adminData', JSON.stringify(adminData));
 
-                // Redirect to dashboard
+                // Google signup/login goes directly to dashboard
                 setTimeout(() => {
                     window.location.href = 'dashboard.html';
-                }, 1500);
+                }, 1000);
 
             } catch (error) {
                 console.error('Authentication error:', error);
