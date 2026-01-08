@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset Admin System - Deny's Beauty World</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+    <script src="config.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script>
@@ -64,8 +66,16 @@
                     <div class="text-sm text-red-800">
                         <p class="font-semibold mb-1">⚠️ Developer Reset</p>
                         <p>This will delete all admin accounts so the real salon owner can create their master admin account.</p>
+                        <p class="mt-2 font-semibold">🔒 Security: Only authorized Google emails can access admin panel.</p>
                     </div>
                 </div>
+            </div>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <h3 class="font-semibold text-blue-800 mb-2">🔐 Authorized Emails Only:</h3>
+                <ul class="text-sm text-blue-700 space-y-1" id="authorizedEmails">
+                    <!-- Will be populated by JavaScript -->
+                </ul>
             </div>
 
             <div class="space-y-4 mb-6">
@@ -76,12 +86,17 @@
                 </div>
                 <div class="bg-green-50 border border-green-200 rounded-lg p-3">
                     <p class="text-sm text-green-800">
-                        <span class="font-semibold">Step 2:</span> Real admin goes to /admin/signup.html
+                        <span class="font-semibold">Step 2:</span> Real admin goes to signup page
                     </p>
                 </div>
                 <div class="bg-purple-50 border border-purple-200 rounded-lg p-3">
                     <p class="text-sm text-purple-800">
-                        <span class="font-semibold">Step 3:</span> Real admin becomes master with full control
+                        <span class="font-semibold">Step 3:</span> Use Google Sign-in (only authorized emails work)
+                    </p>
+                </div>
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                    <p class="text-sm text-yellow-800">
+                        <span class="font-semibold">Step 4:</span> Real admin becomes master with full control
                     </p>
                 </div>
             </div>
@@ -93,6 +108,13 @@
                 </span>
             </button>
             
+            <button onclick="window.location.href='signup.html'" class="w-full bg-primary hover:bg-primary-light text-white font-semibold py-3 px-4 rounded-lg transition-all mb-2">
+                <span class="flex items-center justify-center gap-2">
+                    <span class="material-icons">person_add</span>
+                    Go to Signup (Authorized Only)
+                </span>
+            </button>
+            
             <button onclick="window.location.href='login.html'" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-4 rounded-lg transition-all">
                 <span class="flex items-center justify-center gap-2">
                     <span class="material-icons">arrow_back</span>
@@ -101,23 +123,48 @@
             </button>
             
             <div id="message" class="mt-4 p-3 rounded hidden"></div>
+            
+            <div class="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                <h3 class="font-semibold text-gray-800 mb-2">🔒 Security Features:</h3>
+                <ul class="text-sm text-gray-600 space-y-1">
+                    <li>• Only authorized Google emails can access admin</li>
+                    <li>• Failed login attempt tracking and lockout</li>
+                    <li>• Session timeout protection</li>
+                    <li>• Master admin role for full control</li>
+                    <li>• Email verification required</li>
+                </ul>
+            </div>
         </div>
     </div>
 
     <script>
+        // Display authorized emails from config
+        window.addEventListener('load', () => {
+            const emailsList = document.getElementById('authorizedEmails');
+            if (ADMIN_CONFIG && ADMIN_CONFIG.AUTHORIZED_EMAILS) {
+                emailsList.innerHTML = ADMIN_CONFIG.AUTHORIZED_EMAILS.map(email => 
+                    `<li>• ${email}</li>`
+                ).join('');
+            } else {
+                emailsList.innerHTML = '<li>• Configuration not loaded</li>';
+            }
+        });
+
         document.getElementById('resetBtn').addEventListener('click', function() {
-            if (confirm('⚠️ Are you sure? This will delete ALL admin accounts and allow the real admin to take control!')) {
-                if (confirm('This action cannot be undone. The real salon owner will need to create their account. Continue?')) {
-                    // Clear all admin accounts
+            if (confirm('⚠️ Are you sure? This will delete ALL admin accounts and allow only authorized Google emails to create new admin accounts!')) {
+                if (confirm('This action cannot be undone. Only the authorized salon owner emails can create accounts after this. Continue?')) {
+                    // Clear all admin accounts and security data
                     localStorage.removeItem('adminAccounts');
+                    localStorage.removeItem('loginAttempts');
+                    sessionStorage.clear();
                     
-                    showMessage('✅ Admin system reset successfully! Real admin can now signup at /admin/signup.html', 'success');
+                    showMessage('✅ Admin system reset successfully! Only authorized Google emails can now signup.', 'success');
                     
                     let countdown = 5;
                     const countdownInterval = setInterval(() => {
                         countdown--;
                         if (countdown > 0) {
-                            showMessage(`✅ System reset! Redirecting to signup in ${countdown} seconds...`, 'success');
+                            showMessage(`✅ System reset! Only authorized Google emails can create admin accounts. Redirecting to signup in ${countdown} seconds...`, 'success');
                         } else {
                             clearInterval(countdownInterval);
                             window.location.href = 'signup.html';
