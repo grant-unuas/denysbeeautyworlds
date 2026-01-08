@@ -572,6 +572,10 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+app.get('/admin/reset', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin', 'reset.html'));
+});
+
 app.get('/admin/signup', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin', 'signup.html'));
 });
