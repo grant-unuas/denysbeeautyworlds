@@ -257,36 +257,45 @@
 
             <!-- Bookings Section -->
             <div id="bookings-section" class="section hidden">
-                <div class="mb-8">
-                    <div class="flex justify-between items-center">
-                        <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-2">Bookings</h1>
-                        <button onclick="deleteAllBookings()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 flex items-center gap-2">
-                            <span class="material-icons text-sm">delete_sweep</span>
-                            Delete All
+                <div class="mb-6 lg:mb-8">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                        <h1 class="text-2xl lg:text-3xl font-display font-bold text-gray-800 dark:text-gray-200">Bookings</h1>
+                        <button onclick="deleteAllBookings()" class="bg-red-500 text-white px-3 lg:px-4 py-2 rounded-lg hover:bg-red-600 flex items-center justify-center gap-2 text-sm lg:text-base">
+                            <span class="material-icons text-sm lg:text-base">delete_sweep</span>
+                            <span class="hidden sm:inline">Delete All</span>
+                            <span class="sm:hidden">Delete</span>
                         </button>
                     </div>
                 </div>
                 
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-                    <div class="p-6">
-                        <div class="overflow-x-auto">
-                            <table class="w-full">
-                                <thead>
-                                    <tr class="border-b border-gray-200 dark:border-gray-700">
-                                        <th class="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Customer</th>
-                                        <th class="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Phone</th>
-                                        <th class="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Service</th>
-                                        <th class="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Date</th>
-                                        <th class="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Status</th>
-                                        <th class="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="bookingsTable">
-                                    <tr>
-                                        <td colspan="6" class="text-center py-8 text-gray-500 dark:text-gray-400">No bookings found</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <!-- Mobile Card View -->
+                    <div class="block lg:hidden" id="bookingsCards">
+                        <div class="p-4 text-center text-gray-500 dark:text-gray-400">No bookings found</div>
+                    </div>
+                    
+                    <!-- Desktop Table View -->
+                    <div class="hidden lg:block">
+                        <div class="p-6">
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead>
+                                        <tr class="border-b border-gray-200 dark:border-gray-700">
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Customer</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Phone</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Service</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Date</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Status</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bookingsTable">
+                                        <tr>
+                                            <td colspan="6" class="text-center py-8 text-gray-500 dark:text-gray-400">No bookings found</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -411,6 +420,34 @@
                 
                 if (isAuthenticated) {
                     const user = await auth0Client.getUser();
+                    
+                    // Check if this is a new Google user and if admin already exists
+                    const admins = JSON.parse(localStorage.getItem('adminAccounts') || '[]');
+                    if (admins.length > 0) {
+                        // Admin already exists, don't allow new Google users
+                        const existingAdmin = admins.find(admin => admin.email === user.email);
+                        if (!existingAdmin) {
+                            // This is a different Google user, redirect to login
+                            await auth0Client.logout({
+                                logoutParams: {
+                                    returnTo: window.location.origin + '/admin/login.html'
+                                }
+                            });
+                            return;
+                        }
+                    } else {
+                        // No admin exists, create one for this Google user
+                        const googleAdmin = {
+                            id: Date.now().toString(),
+                            fullName: user.name || user.email,
+                            email: user.email,
+                            role: 'master',
+                            provider: 'google',
+                            createdAt: new Date().toISOString()
+                        };
+                        localStorage.setItem('adminAccounts', JSON.stringify([googleAdmin]));
+                    }
+                    
                     document.getElementById('userName').textContent = user.name || user.email;
                     document.getElementById('displayName').textContent = user.name || 'Admin';
                     document.getElementById('displayEmail').textContent = user.email || 'admin@example.com';
@@ -582,9 +619,13 @@
                 const bookings = await response.json();
                 
                 const table = document.getElementById('bookingsTable');
+                const cards = document.getElementById('bookingsCards');
+                
                 if (bookings.length === 0) {
                     table.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-500 dark:text-gray-400">No bookings found</td></tr>';
+                    cards.innerHTML = '<div class="p-4 text-center text-gray-500 dark:text-gray-400">No bookings found</div>';
                 } else {
+                    // Desktop table view
                     table.innerHTML = bookings.map(booking => `
                         <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
                             <td class="py-3 px-4">
@@ -622,6 +663,44 @@
                                 </div>
                             </td>
                         </tr>
+                    `).join('');
+                    
+                    // Mobile card view
+                    cards.innerHTML = bookings.map(booking => `
+                        <div class="p-4 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-800 dark:text-gray-200 text-sm">${booking.customer_name}</h3>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">${booking.customer_phone}</p>
+                                </div>
+                                <span class="px-2 py-1 rounded-full text-xs font-medium ${
+                                    booking.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                                    booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                    booking.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                                    'bg-gray-100 text-gray-800'
+                                }">
+                                    ${booking.status || 'pending'}
+                                </span>
+                            </div>
+                            <div class="space-y-2 mb-3">
+                                <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                                    <span class="material-icons text-sm">spa</span>
+                                    <span>${booking.service_name || 'Unknown Service'}</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                                    <span class="material-icons text-sm">schedule</span>
+                                    <span>${booking.booking_date} at ${booking.booking_time}</span>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="updateBookingStatus(${booking.id}, 'confirmed')" class="flex-1 bg-green-500 text-white px-3 py-2 rounded text-xs hover:bg-green-600 font-medium">
+                                    Confirm
+                                </button>
+                                <button onclick="updateBookingStatus(${booking.id}, 'cancelled')" class="flex-1 bg-red-500 text-white px-3 py-2 rounded text-xs hover:bg-red-600 font-medium">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
                     `).join('');
                 }
             } catch (error) {
