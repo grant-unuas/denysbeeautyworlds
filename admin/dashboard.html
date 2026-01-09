@@ -359,7 +359,7 @@
         window.addEventListener('load', async () => {
             // Check if this is a callback from Auth0
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('code') || urlParams.has('error')) {
+            if (urlParams.has('code')) {
                 try {
                     const AUTHORIZED_EMAILS = [
                         'grantunuas@gmail.com',
@@ -389,47 +389,34 @@
                             createdAt: new Date().toISOString()
                         };
                         
-                        const admins = JSON.parse(localStorage.getItem('adminAccounts') || '[]');
-                        if (!admins.find(admin => admin.email === user.email)) {
-                            admins.push(adminData);
-                            localStorage.setItem('adminAccounts', JSON.stringify(admins));
-                        }
-
                         sessionStorage.setItem('adminAuthenticated', 'true');
                         sessionStorage.setItem('adminLoginTime', Date.now().toString());
                         sessionStorage.setItem('adminData', JSON.stringify(adminData));
                         
-                        // Clear URL parameters
+                        // Clear URL and reload
                         window.history.replaceState({}, document.title, window.location.pathname);
-                        
-                        // Update UI
-                        document.getElementById('userName').textContent = adminData.fullName;
-                        document.getElementById('displayName').textContent = adminData.fullName;
-                        document.getElementById('displayEmail').textContent = adminData.email;
-                        document.getElementById('loginMethod').textContent = 'Google Account';
-                    } else {
-                        window.location.href = 'login.html';
+                        window.location.reload();
                         return;
                     }
                 } catch (error) {
-                    console.error('Auth callback error:', error);
-                    window.location.href = 'login.html';
-                    return;
+                    console.error('Auth error:', error);
                 }
-            } else {
-                // Check existing session
-                const localAuth = sessionStorage.getItem('adminAuthenticated');
-                if (localAuth !== 'true') {
-                    window.location.href = 'login.html';
-                    return;
-                }
-                
-                const userData = JSON.parse(sessionStorage.getItem('adminData') || '{}');
-                document.getElementById('userName').textContent = userData.fullName || 'Admin';
-                document.getElementById('displayName').textContent = userData.fullName || 'Admin';
-                document.getElementById('displayEmail').textContent = userData.email || 'admin@example.com';
-                document.getElementById('loginMethod').textContent = userData.provider === 'google' ? 'Google Account' : 'Email & Password';
+                window.location.href = 'login.html';
+                return;
             }
+            
+            // Check session
+            if (sessionStorage.getItem('adminAuthenticated') !== 'true') {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Load dashboard
+            const userData = JSON.parse(sessionStorage.getItem('adminData') || '{}');
+            document.getElementById('userName').textContent = userData.fullName || 'Admin';
+            document.getElementById('displayName').textContent = userData.fullName || 'Admin';
+            document.getElementById('displayEmail').textContent = userData.email || 'admin@example.com';
+            document.getElementById('loginMethod').textContent = userData.provider === 'google' ? 'Google Account' : 'Email & Password';
             
             loadDashboardData();
             await loadProfile();
