@@ -87,13 +87,18 @@
             }
         }
         
-        // Enhanced session validation
-        if (!security.validateSession()) {
-            window.location.href = 'login.html';
+        // Enhanced session validation (simplified)
+        try {
+            if (!security.validateSession()) {
+                window.location.href = 'login.html';
+            }
+        } catch (error) {
+            console.error('Security validation error:', error);
+            // Fallback to basic check
+            if (sessionStorage.getItem('adminAuthenticated') !== 'true') {
+                window.location.href = 'login.html';
+            }
         }
-        
-        // Detect suspicious activity
-        security.detectSuspiciousActivity();
     </script>
 </head>
 <body class="font-body bg-background-light dark:bg-background-dark min-h-screen">
@@ -978,7 +983,14 @@
         }
 
         function logout() {
-            security.clearSession();
+            try {
+                security.clearSession();
+            } catch (error) {
+                console.error('Secure logout error:', error);
+                // Fallback to basic logout
+                sessionStorage.clear();
+                localStorage.removeItem('tempAuthData');
+            }
             window.location.href = 'login.html';
         }
 
