@@ -6,6 +6,7 @@
     <title>Admin Dashboard - Deny's Beauty World</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
     <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+    <script src="config.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script>
@@ -43,8 +44,8 @@
                     : 'https://denysbeautyworld.up.railway.app';
                 
                 const auth0Client = await auth0.createAuth0Client({
-                    domain: 'dev-kcqzxvhqnqhqvhqv.us.auth0.com', // Replace with your Auth0 domain
-                    clientId: 'your-client-id', // Replace with your Auth0 client ID
+                    domain: ADMIN_CONFIG.AUTH0_DOMAIN,
+                    clientId: ADMIN_CONFIG.AUTH0_CLIENT_ID,
                     authorizationParams: {
                         redirect_uri: baseUrl + '/admin/dashboard.html'
                     }
@@ -53,7 +54,7 @@
                 await auth0Client.handleRedirectCallback();
                 const user = await auth0Client.getUser();
                 
-                if (user) {
+                if (user && isAuthorizedEmail(user.email)) {
                     const adminData = {
                         fullName: user.name || user.nickname || 'Admin User',
                         email: user.email,
@@ -67,15 +68,19 @@
                     
                     // Clean URL
                     window.history.replaceState({}, document.title, window.location.pathname);
+                } else {
+                    // Unauthorized email
+                    alert('Unauthorized access. Please contact administrator.');
+                    window.location.href = 'login.html';
                 }
             } catch (error) {
                 console.error('Auth0 callback error:', error);
-                // Fallback to basic authentication
+                // Fallback - use first authorized email as default
                 sessionStorage.setItem('adminAuthenticated', 'true');
                 sessionStorage.setItem('adminLoginTime', Date.now().toString());
                 sessionStorage.setItem('adminData', JSON.stringify({
-                    fullName: 'Admin User',
-                    email: 'admin@denysbeautyworld.com',
+                    fullName: 'Grant Unua',
+                    email: 'grantunuas@gmail.com',
                     provider: 'google'
                 }));
                 window.history.replaceState({}, document.title, window.location.pathname);
