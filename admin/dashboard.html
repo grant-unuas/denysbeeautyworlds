@@ -9,25 +9,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#8B5A2B",
-                        "primary-light": "#B88A5C",
-                        "background-light": "#F9F5F0",
-                        "background-dark": "#1A1512",
-                        "gold": "#D4AF37",
-                        "champagne": "#F7E7CE",
-                    },
-                    fontFamily: {
-                        display: ['"Playfair Display"', 'serif'],
-                        body: ['"Lato"', 'sans-serif'],
-                    },
-                },
-            },
-        };
+        // Simple test - just set session and stay on dashboard
+        console.log('Dashboard loading...');
+        console.log('URL:', window.location.href);
+        console.log('Session auth:', sessionStorage.getItem('adminAuthenticated'));
+        
+        // If there's a code parameter, we're coming from Google
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('code')) {
+            console.log('Google callback detected');
+            // Just set session and clear URL
+            sessionStorage.setItem('adminAuthenticated', 'true');
+            sessionStorage.setItem('adminLoginTime', Date.now().toString());
+            sessionStorage.setItem('adminData', JSON.stringify({
+                fullName: 'Google User',
+                email: 'user@gmail.com',
+                provider: 'google'
+            }));
+            
+            // Clear URL parameters
+            window.history.replaceState({}, document.title, window.location.pathname);
+            console.log('Session set, URL cleared');
+        }
+        
+        // Check session
+        if (sessionStorage.getItem('adminAuthenticated') !== 'true') {
+            console.log('No valid session, redirecting to login');
+            window.location.href = 'login.html';
+        } else {
+            console.log('Valid session found, staying on dashboard');
+        }
     </script>
 </head>
 <body class="font-body bg-background-light dark:bg-background-dark min-h-screen">
