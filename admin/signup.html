@@ -143,7 +143,7 @@
                 domain: ADMIN_CONFIG.AUTH0_DOMAIN,
                 clientId: ADMIN_CONFIG.AUTH0_CLIENT_ID,
                 authorizationParams: {
-                    redirect_uri: window.location.origin + '/admin/callback.html'
+                    redirect_uri: window.location.origin + '/admin/dashboard.html'
                 }
             });
         });
@@ -278,7 +278,7 @@
                 const authUrl = `https://${ADMIN_CONFIG.AUTH0_DOMAIN}/authorize?` +
                     `response_type=code&` +
                     `client_id=${ADMIN_CONFIG.AUTH0_CLIENT_ID}&` +
-                    `redirect_uri=${encodeURIComponent(baseUrl + '/admin/callback.html')}&` +
+                    `redirect_uri=${encodeURIComponent(baseUrl + '/admin/dashboard.html')}&` +
                     `connection=google-oauth2&` +
                     `scope=openid profile email`;
                 
