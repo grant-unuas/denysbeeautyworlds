@@ -97,8 +97,9 @@
             <div class="absolute bottom-6 left-6 right-6">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                            <span class="material-icons text-white text-sm">person</span>
+                        <div id="sidebarProfilePhoto" class="w-8 h-8 bg-primary rounded-full flex items-center justify-center overflow-hidden">
+                            <span id="sidebarPhotoPlaceholder" class="material-icons text-white text-sm">person</span>
+                            <img id="sidebarPhoto" class="w-full h-full object-cover hidden" alt="Profile">
                         </div>
                         <span id="userName" class="text-sm font-medium text-gray-700 dark:text-gray-300">Admin</span>
                     </div>
@@ -345,7 +346,6 @@
             event.target.closest('.nav-item').classList.add('bg-primary', 'text-white');
             event.target.closest('.nav-item').classList.remove('text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
             
-            // Load data when switching sections
             if (sectionName === 'products') loadProducts();
             if (sectionName === 'videos') loadVideos();
             if (sectionName === 'gallery') loadGallery();
@@ -387,7 +387,7 @@
             } else {
                 grid.innerHTML = videos.map(video => `
                     <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
-                        <div class="aspect-video bg-gray-200 rounded mb-3 flex items-center justify-center cursor-pointer" onclick="playVideo('${video.videoUrl}', '${video.title}')">
+                        <div class="aspect-video bg-gray-200 rounded mb-3 flex items-center justify-center cursor-pointer relative" onclick="playVideo('${video.videoUrl}', '${video.title}')">
                             ${video.videoUrl ? `
                                 <video class="w-full h-full object-cover rounded" muted>
                                     <source src="${video.videoUrl}" type="video/mp4">
@@ -478,7 +478,6 @@
                 `;
             }
         }
-
         // Modal functions
         function openProductModal() {
             const modal = document.createElement('div');
@@ -513,7 +512,6 @@
             `;
             document.body.appendChild(modal);
             
-            // Image preview
             document.getElementById('productImage').addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
@@ -649,7 +647,6 @@
             `;
             document.body.appendChild(modal);
             
-            // Image preview
             document.getElementById('galleryImage').addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
@@ -722,6 +719,104 @@
             });
         }
 
+        function openProfileModal() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl max-w-md w-full">
+                    <h3 class="text-lg font-semibold mb-4">Edit Profile</h3>
+                    <form id="profileForm">
+                        <div class="space-y-4">
+                            <div class="text-center">
+                                <div class="relative inline-block">
+                                    <div id="modalPhotoContainer" class="w-20 h-20 bg-primary rounded-full flex items-center justify-center overflow-hidden mx-auto">
+                                        <span id="modalPhotoPlaceholder" class="material-icons text-white text-3xl">person</span>
+                                        <img id="modalProfilePhoto" class="w-full h-full object-cover hidden" alt="Profile">
+                                    </div>
+                                    <label for="profilePhotoInput" class="absolute -bottom-1 -right-1 bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-blue-600">
+                                        <span class="material-icons text-sm">camera_alt</span>
+                                    </label>
+                                </div>
+                                <input type="file" id="profilePhotoInput" accept="image/*" class="hidden">
+                            </div>
+                            
+                            <input type="text" id="profileNameInput" placeholder="Full Name" required class="w-full p-3 border rounded-lg">
+                        </div>
+                        <div class="flex gap-3 mt-6">
+                            <button type="submit" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg">Save</button>
+                            <button type="button" onclick="this.closest('.fixed').remove()" class="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            const userData = JSON.parse(sessionStorage.getItem('adminData') || '{}');
+            const profileData = JSON.parse(localStorage.getItem('profileData') || '{}');
+            
+            document.getElementById('profileNameInput').value = profileData.name || userData.fullName || '';
+            
+            if (profileData.photo) {
+                document.getElementById('modalProfilePhoto').src = profileData.photo;
+                document.getElementById('modalProfilePhoto').classList.remove('hidden');
+                document.getElementById('modalPhotoPlaceholder').classList.add('hidden');
+            }
+            
+            document.getElementById('profilePhotoInput').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('modalProfilePhoto').src = e.target.result;
+                        document.getElementById('modalProfilePhoto').classList.remove('hidden');
+                        document.getElementById('modalPhotoPlaceholder').classList.add('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            document.getElementById('profileForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const photoFile = document.getElementById('profilePhotoInput').files[0];
+                const name = document.getElementById('profileNameInput').value;
+                
+                if (photoFile) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        saveProfile(name, e.target.result);
+                    };
+                    reader.readAsDataURL(photoFile);
+                } else {
+                    saveProfile(name, profileData.photo || '');
+                }
+                
+                function saveProfile(name, photo) {
+                    const newProfileData = { name, photo };
+                    localStorage.setItem('profileData', JSON.stringify(newProfileData));
+                    
+                    const userData = JSON.parse(sessionStorage.getItem('adminData') || '{}');
+                    userData.fullName = name;
+                    sessionStorage.setItem('adminData', JSON.stringify(userData));
+                    
+                    document.getElementById('displayName').textContent = name;
+                    document.getElementById('userName').textContent = name;
+                    
+                    if (photo) {
+                        document.getElementById('profilePhoto').src = photo;
+                        document.getElementById('profilePhoto').classList.remove('hidden');
+                        document.getElementById('profilePhotoPlaceholder').classList.add('hidden');
+                        
+                        document.getElementById('sidebarPhoto').src = photo;
+                        document.getElementById('sidebarPhoto').classList.remove('hidden');
+                        document.getElementById('sidebarPhotoPlaceholder').classList.add('hidden');
+                    }
+                    
+                    modal.remove();
+                }
+            });
+        }
+
         // Delete functions
         function deleteProduct(id) {
             if (confirm('Delete this product?')) {
@@ -776,128 +871,7 @@
             }
         }
 
-        function logout() {
-            sessionStorage.clear();
-            window.location.href = 'login.html';
-        }
-
-        // Mobile menu
-        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
-            document.getElementById('sidebar').classList.toggle('-translate-x-full');
-        });
-
-        // Initialize
-        window.addEventListener('load', () => {
-            const userData = JSON.parse(sessionStorage.getItem('adminData') || '{}');
-            document.getElementById('userName').textContent = userData.fullName || 'Admin';
-            document.getElementById('displayName').textContent = userData.fullName || 'Admin';
-            document.getElementById('displayEmail').textContent = userData.email || 'admin@example.com';
-            document.getElementById('loginMethod').textContent = userData.provider === 'google' ? 'Google Account' : 'Email & Password';
-            
-            updateStats();
-        });
-    </script>
-</body>
-</html>
-        function openProfileModal() {
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
-            modal.innerHTML = `
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl max-w-md w-full">
-                    <h3 class="text-lg font-semibold mb-4">Edit Profile</h3>
-                    <form id="profileForm">
-                        <div class="space-y-4">
-                            <div class="text-center">
-                                <div class="relative inline-block">
-                                    <div id="modalPhotoContainer" class="w-20 h-20 bg-primary rounded-full flex items-center justify-center overflow-hidden mx-auto">
-                                        <span id="modalPhotoPlaceholder" class="material-icons text-white text-3xl">person</span>
-                                        <img id="modalProfilePhoto" class="w-full h-full object-cover hidden" alt="Profile">
-                                    </div>
-                                    <label for="profilePhotoInput" class="absolute -bottom-1 -right-1 bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-blue-600">
-                                        <span class="material-icons text-sm">camera_alt</span>
-                                    </label>
-                                </div>
-                                <input type="file" id="profilePhotoInput" accept="image/*" class="hidden">
-                            </div>
-                            
-                            <input type="text" id="profileNameInput" placeholder="Full Name" required class="w-full p-3 border rounded-lg">
-                        </div>
-                        <div class="flex gap-3 mt-6">
-                            <button type="submit" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg">Save</button>
-                            <button type="button" onclick="this.closest('.fixed').remove()" class="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg">Cancel</button>
-                        </div>
-                    </form>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            
-            // Load current profile data
-            const userData = JSON.parse(sessionStorage.getItem('adminData') || '{}');
-            const profileData = JSON.parse(localStorage.getItem('profileData') || '{}');
-            
-            document.getElementById('profileNameInput').value = profileData.name || userData.fullName || '';
-            
-            if (profileData.photo) {
-                document.getElementById('modalProfilePhoto').src = profileData.photo;
-                document.getElementById('modalProfilePhoto').classList.remove('hidden');
-                document.getElementById('modalPhotoPlaceholder').classList.add('hidden');
-            }
-            
-            // Photo upload preview
-            document.getElementById('profilePhotoInput').addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        document.getElementById('modalProfilePhoto').src = e.target.result;
-                        document.getElementById('modalProfilePhoto').classList.remove('hidden');
-                        document.getElementById('modalPhotoPlaceholder').classList.add('hidden');
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-            
-            // Form submission
-            document.getElementById('profileForm').addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                const photoFile = document.getElementById('profilePhotoInput').files[0];
-                const name = document.getElementById('profileNameInput').value;
-                
-                if (photoFile) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        saveProfile(name, e.target.result);
-                    };
-                    reader.readAsDataURL(photoFile);
-                } else {
-                    saveProfile(name, profileData.photo || '');
-                }
-                
-                function saveProfile(name, photo) {
-                    const newProfileData = { name, photo };
-                    localStorage.setItem('profileData', JSON.stringify(newProfileData));
-                    
-                    // Update session data
-                    const userData = JSON.parse(sessionStorage.getItem('adminData') || '{}');
-                    userData.fullName = name;
-                    sessionStorage.setItem('adminData', JSON.stringify(userData));
-                    
-                    // Update UI
-                    document.getElementById('displayName').textContent = name;
-                    document.getElementById('userName').textContent = name;
-                    
-                    if (photo) {
-                        document.getElementById('profilePhoto').src = photo;
-                        document.getElementById('profilePhoto').classList.remove('hidden');
-                        document.getElementById('profilePhotoPlaceholder').classList.add('hidden');
-                    }
-                    
-                    modal.remove();
-                }
-            });
-        }
-
+        // View functions
         function playVideo(videoUrl, title) {
             if (!videoUrl) return;
             
@@ -941,7 +915,30 @@
             document.body.appendChild(modal);
         }
 
-        // Initialize profile on load
+        // View on website functions
+        function viewProductsPage() {
+            window.open('../products.html', '_blank');
+        }
+
+        function viewVideosPage() {
+            window.open('../videos.html', '_blank');
+        }
+
+        function viewGalleryPage() {
+            window.open('../gallery.html', '_blank');
+        }
+
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        // Mobile menu
+        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+        });
+
+        // Initialize
         window.addEventListener('load', () => {
             const userData = JSON.parse(sessionStorage.getItem('adminData') || '{}');
             const profileData = JSON.parse(localStorage.getItem('profileData') || '{}');
@@ -957,6 +954,10 @@
                 document.getElementById('profilePhoto').src = profileData.photo;
                 document.getElementById('profilePhoto').classList.remove('hidden');
                 document.getElementById('profilePhotoPlaceholder').classList.add('hidden');
+                
+                document.getElementById('sidebarPhoto').src = profileData.photo;
+                document.getElementById('sidebarPhoto').classList.remove('hidden');
+                document.getElementById('sidebarPhotoPlaceholder').classList.add('hidden');
             }
             
             updateStats();
@@ -964,15 +965,3 @@
     </script>
 </body>
 </html>
-        // View on website functions
-        function viewProductsPage() {
-            window.open('../products.html', '_blank');
-        }
-
-        function viewVideosPage() {
-            window.open('../videos.html', '_blank');
-        }
-
-        function viewGalleryPage() {
-            window.open('../gallery.html', '_blank');
-        }
