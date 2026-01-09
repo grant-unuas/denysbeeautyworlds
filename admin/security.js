@@ -180,14 +180,21 @@ class SecurityManager {
 
     // Clear session securely
     clearSession() {
-        sessionStorage.clear();
-        localStorage.removeItem('tempAuthData');
-        
-        // Clear any cached data
-        if ('caches' in window) {
-            caches.keys().then(names => {
-                names.forEach(name => caches.delete(name));
-            });
+        try {
+            sessionStorage.clear();
+            localStorage.removeItem('tempAuthData');
+            localStorage.removeItem('securityToken');
+            
+            // Clear any cached data
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => caches.delete(name));
+                });
+            }
+        } catch (error) {
+            console.error('Session clear error:', error);
+            // Force clear even if error
+            sessionStorage.clear();
         }
     }
 
