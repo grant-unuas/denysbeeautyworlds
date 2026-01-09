@@ -438,9 +438,8 @@
                 const localAuth = sessionStorage.getItem('adminAuthenticated');
                 const loginTime = parseInt(sessionStorage.getItem('adminLoginTime') || '0');
                 const currentTime = Date.now();
-                const sessionDuration = 2 * 60 * 60 * 1000; // 2 hours
                 
-                if (localAuth === 'true' && (currentTime - loginTime < sessionDuration)) {
+                if (localAuth === 'true' && (currentTime - loginTime < ADMIN_CONFIG.SESSION_TIMEOUT)) {
                     const userData = JSON.parse(sessionStorage.getItem('adminData') || '{}');
                     document.getElementById('userName').textContent = userData.fullName || userData.name || 'Admin';
                     document.getElementById('displayName').textContent = userData.fullName || userData.name || 'Admin';
@@ -449,71 +448,14 @@
                     return; // Successfully authenticated
                 }
                 
-                // Try Auth0 authentication
-                auth0Client = await auth0.createAuth0Client({
-                    domain: ADMIN_CONFIG.AUTH0_DOMAIN,
-                    clientId: ADMIN_CONFIG.AUTH0_CLIENT_ID,
-                    authorizationParams: {
-                        redirect_uri: window.location.origin + '/admin/dashboard.html'
-                    }
-                });
-
-                if (window.location.search.includes('code=')) {
-                    await auth0Client.handleRedirectCallback();
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                }
-
-                const isAuthenticated = await auth0Client.isAuthenticated();
+                // If no valid session, redirect to login
+                sessionStorage.removeItem('adminAuthenticated');
+                sessionStorage.removeItem('adminLoginTime');
+                sessionStorage.removeItem('adminData');
+                window.location.href = '/admin/login.html';
                 
-                if (isAuthenticated) {
-                    const user = await auth0Client.getUser();
-                    
-                    // Check if this is a new Google user and if admin already exists
-                    const admins = JSON.parse(localStorage.getItem('adminAccounts') || '[]');
-                    if (admins.length > 0) {
-                        // Admin already exists, don't allow new Google users
-                        const existingAdmin = admins.find(admin => admin.email === user.email);
-                        if (!existingAdmin) {
-                            // This is a different Google user, redirect to login
-                            await auth0Client.logout({
-                                logoutParams: {
-                                    returnTo: window.location.origin + '/admin/login.html'
-                                }
-                            });
-                            return;
-                        }
-                    } else {
-                        // No admin exists, create one for this Google user
-                        const googleAdmin = {
-                            id: Date.now().toString(),
-                            fullName: user.name || user.email,
-                            email: user.email,
-                            role: 'master',
-                            provider: 'google',
-                            createdAt: new Date().toISOString()
-                        };
-                        localStorage.setItem('adminAccounts', JSON.stringify([googleAdmin]));
-                    }
-                    
-                    document.getElementById('userName').textContent = user.name || user.email;
-                    document.getElementById('displayName').textContent = user.name || 'Admin';
-                    document.getElementById('displayEmail').textContent = user.email || 'admin@example.com';
-                    document.getElementById('loginMethod').textContent = 'Google Account';
-                    
-                    // Set session storage for future visits
-                    sessionStorage.setItem('adminAuthenticated', 'true');
-                    sessionStorage.setItem('adminLoginTime', Date.now().toString());
-                    sessionStorage.setItem('adminData', JSON.stringify({
-                        ...user,
-                        provider: 'google'
-                    }));
-                } else {
-                    // No valid authentication found
-                    throw new Error('Not authenticated');
-                }
             } catch (error) {
                 console.error('Auth error:', error);
-                // Clear any invalid session data
                 sessionStorage.removeItem('adminAuthenticated');
                 sessionStorage.removeItem('adminLoginTime');
                 sessionStorage.removeItem('adminData');
