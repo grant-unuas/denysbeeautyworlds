@@ -136,8 +136,9 @@
 
         async function loadProducts() {
             try {
-                const response = await fetch('/api/products');
-                allProducts = await response.json();
+                // Load products from localStorage (uploaded via admin dashboard)
+                const storedProducts = JSON.parse(localStorage.getItem('products') || '[]');
+                allProducts = storedProducts;
                 
                 document.getElementById('loadingMessage').classList.add('hidden');
                 
@@ -170,7 +171,7 @@
             grid.innerHTML = products.map(product => `
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
                     <div class="aspect-square overflow-hidden">
-                        <img src="${product.image_url || 'https://via.placeholder.com/300x300?text=No+Image'}" 
+                        <img src="${product.image || 'https://via.placeholder.com/300x300?text=No+Image'}" 
                              alt="${product.name}" 
                              class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
                     </div>
