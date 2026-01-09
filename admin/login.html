@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
     <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
     <script src="config.js"></script>
+    <script src="security.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script>
@@ -227,9 +228,8 @@
         }
 
         function setSession(adminData) {
-            sessionStorage.setItem('adminAuthenticated', 'true');
-            sessionStorage.setItem('adminLoginTime', Date.now().toString());
-            sessionStorage.setItem('adminData', JSON.stringify(adminData));
+            // Use secure session creation
+            security.createSecureSession(adminData);
         }
 
         document.getElementById('loginForm').addEventListener('submit', function(e) {
