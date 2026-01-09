@@ -228,8 +228,16 @@
         }
 
         function setSession(adminData) {
-            // Use secure session creation
-            security.createSecureSession(adminData);
+            // Use secure session creation with fallback
+            try {
+                security.createSecureSession(adminData);
+            } catch (error) {
+                console.error('Secure session error:', error);
+                // Fallback to basic session
+                sessionStorage.setItem('adminAuthenticated', 'true');
+                sessionStorage.setItem('adminLoginTime', Date.now().toString());
+                sessionStorage.setItem('adminData', JSON.stringify(adminData));
+            }
         }
 
         document.getElementById('loginForm').addEventListener('submit', function(e) {
