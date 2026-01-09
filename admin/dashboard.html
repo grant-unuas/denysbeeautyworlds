@@ -69,9 +69,8 @@
                     // Clean URL
                     window.history.replaceState({}, document.title, window.location.pathname);
                 } else {
-                    // Unauthorized email
-                    alert('Unauthorized access. Please contact administrator.');
-                    window.location.href = 'login.html';
+                    // Unauthorized email - redirect to main website
+                    window.location.href = '../index.html';
                 }
             } catch (error) {
                 console.error('Auth0 callback error:', error);
