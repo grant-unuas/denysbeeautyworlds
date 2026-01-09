@@ -348,9 +348,7 @@
     <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
 
     <script>
-        const AUTH0_CLIENT_ID = 'gtsyHwdN37OnhgHl7wypSrCLVpblQ9s6';
-        const AUTH0_DOMAIN = 'dev-i5b08jbmyiyg4g8s.us.auth0.com';
-        
+        // Use config from config.js
         let auth0Client;
         let products = JSON.parse(localStorage.getItem('products') || '[]');
         let videos = JSON.parse(localStorage.getItem('videos') || '[]');
@@ -359,6 +357,55 @@
         let services = JSON.parse(localStorage.getItem('services') || '[]');
 
         window.addEventListener('load', async () => {
+            // Check if this is a callback from Auth0
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('code') || urlParams.has('error')) {
+                try {
+                    auth0Client = await auth0.createAuth0Client({
+                        domain: ADMIN_CONFIG.AUTH0_DOMAIN,
+                        clientId: ADMIN_CONFIG.AUTH0_CLIENT_ID,
+                        authorizationParams: {
+                            redirect_uri: window.location.origin + '/admin/dashboard.html'
+                        }
+                    });
+
+                    await auth0Client.handleRedirectCallback();
+                    const user = await auth0Client.getUser();
+
+                    if (user?.email && isAuthorizedEmail(user.email)) {
+                        const adminData = {
+                            id: Date.now().toString(),
+                            fullName: user.name || user.email,
+                            email: user.email,
+                            provider: 'google',
+                            role: 'master',
+                            createdAt: new Date().toISOString()
+                        };
+                        
+                        const admins = JSON.parse(localStorage.getItem('adminAccounts') || '[]');
+                        if (!admins.find(admin => admin.email === user.email)) {
+                            admins.push(adminData);
+                            localStorage.setItem('adminAccounts', JSON.stringify(admins));
+                        }
+
+                        sessionStorage.setItem('adminAuthenticated', 'true');
+                        sessionStorage.setItem('adminLoginTime', Date.now().toString());
+                        sessionStorage.setItem('adminData', JSON.stringify(adminData));
+                        
+                        // Clear URL parameters and continue to dashboard
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    } else {
+                        // Unauthorized, redirect to login
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                } catch (error) {
+                    console.error('Auth callback error:', error);
+                    window.location.href = 'login.html';
+                    return;
+                }
+            }
+            
             await initAuth();
             loadDashboardData();
             await loadProfile();
@@ -404,8 +451,8 @@
                 
                 // Try Auth0 authentication
                 auth0Client = await auth0.createAuth0Client({
-                    domain: AUTH0_DOMAIN,
-                    clientId: AUTH0_CLIENT_ID,
+                    domain: ADMIN_CONFIG.AUTH0_DOMAIN,
+                    clientId: ADMIN_CONFIG.AUTH0_CLIENT_ID,
                     authorizationParams: {
                         redirect_uri: window.location.origin + '/admin/dashboard.html'
                     }
