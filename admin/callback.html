@@ -19,10 +19,9 @@
     </div>
 
     <script>
-        // Simple authorized emails check
         const AUTHORIZED_EMAILS = [
             'grantunuas@gmail.com',
-            'grantunua@gmail.com',
+            'grantunua@gmail.com', 
             'grant.unua@gmail.com',
             'grantunua.s@gmail.com'
         ];
@@ -33,75 +32,29 @@
         let auth0Client;
 
         async function handleCallback() {
-            showMessage('🔄 Starting authentication...', 'info');
-            
             try {
-                // Check if we have URL parameters
-                const urlParams = new URLSearchParams(window.location.search);
-                console.log('URL params:', Object.fromEntries(urlParams));
-                
-                if (!urlParams.has('code') && !urlParams.has('error')) {
-                    throw new Error('No authentication code or error in URL');
-                }
-                
-                if (urlParams.has('error')) {
-                    throw new Error('Auth0 error: ' + urlParams.get('error_description'));
-                }
-                
-                showMessage('🔄 Initializing Auth0...', 'info');
-                
-                // Get base URL
-                const baseUrl = window.location.hostname.includes('railway') 
-                    ? 'https://denysbeautyworld.up.railway.app'
-                    : window.location.origin;
-                
-                console.log('Base URL:', baseUrl);
-                console.log('Current URL:', window.location.href);
-                
-                // Initialize Auth0
                 auth0Client = await auth0.createAuth0Client({
                     domain: AUTH0_DOMAIN,
                     clientId: AUTH0_CLIENT_ID,
                     authorizationParams: {
-                        redirect_uri: baseUrl + '/admin/callback.html'
+                        redirect_uri: window.location.origin + '/admin/callback.html'
                     }
                 });
-                
-                console.log('Auth0 client created');
-                showMessage('🔄 Processing callback...', 'info');
 
-                // Handle callback
-                const result = await auth0Client.handleRedirectCallback();
-                console.log('Callback result:', result);
-                
-                showMessage('🔄 Getting user info...', 'info');
-                
-                // Get user
+                await auth0Client.handleRedirectCallback();
                 const user = await auth0Client.getUser();
-                console.log('User data:', user);
 
-                if (!user) {
-                    throw new Error('No user data received from Auth0');
-                }
-                
-                if (!user.email) {
-                    throw new Error('No email in user data');
+                if (!user?.email) {
+                    throw new Error('No user email received');
                 }
 
-                // Check authorization
                 const userEmail = user.email.toLowerCase().trim();
-                console.log('User email:', userEmail);
-                console.log('Authorized emails:', AUTHORIZED_EMAILS);
-                
                 if (!AUTHORIZED_EMAILS.includes(userEmail)) {
-                    showMessage(`❌ Email "${userEmail}" not in authorized list: ${AUTHORIZED_EMAILS.join(', ')}`, 'error');
-                    setTimeout(() => window.location.href = 'login.html', 5000);
+                    showMessage('Access denied - email not authorized', 'error');
+                    setTimeout(() => window.location.href = 'login.html', 3000);
                     return;
                 }
 
-                showMessage('✅ Email authorized! Creating session...', 'success');
-
-                // Create admin data
                 const adminData = {
                     id: Date.now().toString(),
                     fullName: user.name || user.email,
@@ -111,83 +64,32 @@
                     createdAt: new Date().toISOString()
                 };
                 
-                console.log('Admin data:', adminData);
-                
-                // Save to localStorage
                 const admins = JSON.parse(localStorage.getItem('adminAccounts') || '[]');
-                const existingAdmin = admins.find(admin => admin.email === user.email);
-                
-                if (!existingAdmin) {
+                if (!admins.find(admin => admin.email === user.email)) {
                     admins.push(adminData);
                     localStorage.setItem('adminAccounts', JSON.stringify(admins));
-                    console.log('Admin account created');
-                } else {
-                    console.log('Using existing admin account');
                 }
 
-                // Set session
                 sessionStorage.setItem('adminAuthenticated', 'true');
                 sessionStorage.setItem('adminLoginTime', Date.now().toString());
                 sessionStorage.setItem('adminData', JSON.stringify(adminData));
                 
-                console.log('Session data set');
-
-                showMessage('✅ Success! Redirecting to dashboard in 2 seconds...', 'success');
-                
-                // Redirect to dashboard
-                setTimeout(() => {
-                    console.log('Redirecting to dashboard...');
-                    window.location.href = 'dashboard.html';
-                }, 2000);
+                window.location.href = 'dashboard.html';
 
             } catch (error) {
-                console.error('Full error object:', error);
-                console.error('Error message:', error.message);
-                console.error('Error stack:', error.stack);
-                
-                let errorMsg = 'Unknown error';
-                if (error.message) {
-                    errorMsg = error.message;
-                } else if (error.error_description) {
-                    errorMsg = error.error_description;
-                } else if (error.error) {
-                    errorMsg = error.error;
-                }
-                
-                showMessage('❌ Error: ' + errorMsg, 'error');
-                
-                // Show detailed error for debugging
-                setTimeout(() => {
-                    showMessage('🔍 Check browser console (F12) for detailed error info. Redirecting to login...', 'info');
-                }, 2000);
-                
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 5000);
+                showMessage('Authentication failed', 'error');
+                setTimeout(() => window.location.href = 'login.html', 3000);
             }
         }
 
         function showMessage(message, type) {
             const messageDiv = document.getElementById('message');
-            let bgColor, textColor;
-            
-            if (type === 'error') {
-                bgColor = 'bg-red-100';
-                textColor = 'text-red-700';
-            } else if (type === 'success') {
-                bgColor = 'bg-green-100';
-                textColor = 'text-green-700';
-            } else {
-                bgColor = 'bg-blue-100';
-                textColor = 'text-blue-700';
-            }
-            
-            messageDiv.className = `mt-4 p-3 rounded border ${bgColor} ${textColor}`;
+            const bgColor = type === 'error' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700';
+            messageDiv.className = `mt-4 p-3 rounded border ${bgColor}`;
             messageDiv.textContent = message;
             messageDiv.classList.remove('hidden');
         }
 
-        // Start the callback handling
         window.addEventListener('load', handleCallback);
     </script>
 </body>
