@@ -32,14 +32,54 @@
         // Google callback and session check
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('code')) {
-            sessionStorage.setItem('adminAuthenticated', 'true');
-            sessionStorage.setItem('adminLoginTime', Date.now().toString());
-            sessionStorage.setItem('adminData', JSON.stringify({
-                fullName: 'Google User',
-                email: 'user@gmail.com',
-                provider: 'google'
-            }));
-            window.history.replaceState({}, document.title, window.location.pathname);
+            // Handle Auth0 callback - get real user data
+            handleAuth0Callback();
+        }
+        
+        async function handleAuth0Callback() {
+            try {
+                const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                    ? window.location.origin 
+                    : 'https://denysbeautyworld.up.railway.app';
+                
+                const auth0Client = await auth0.createAuth0Client({
+                    domain: 'dev-kcqzxvhqnqhqvhqv.us.auth0.com', // Replace with your Auth0 domain
+                    clientId: 'your-client-id', // Replace with your Auth0 client ID
+                    authorizationParams: {
+                        redirect_uri: baseUrl + '/admin/dashboard.html'
+                    }
+                });
+                
+                await auth0Client.handleRedirectCallback();
+                const user = await auth0Client.getUser();
+                
+                if (user) {
+                    const adminData = {
+                        fullName: user.name || user.nickname || 'Admin User',
+                        email: user.email,
+                        provider: 'google',
+                        picture: user.picture
+                    };
+                    
+                    sessionStorage.setItem('adminAuthenticated', 'true');
+                    sessionStorage.setItem('adminLoginTime', Date.now().toString());
+                    sessionStorage.setItem('adminData', JSON.stringify(adminData));
+                    
+                    // Clean URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            } catch (error) {
+                console.error('Auth0 callback error:', error);
+                // Fallback to basic authentication
+                sessionStorage.setItem('adminAuthenticated', 'true');
+                sessionStorage.setItem('adminLoginTime', Date.now().toString());
+                sessionStorage.setItem('adminData', JSON.stringify({
+                    fullName: 'Admin User',
+                    email: 'admin@denysbeautyworld.com',
+                    provider: 'google'
+                }));
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
         }
         
         if (sessionStorage.getItem('adminAuthenticated') !== 'true') {
@@ -944,18 +984,33 @@
             const profileData = JSON.parse(localStorage.getItem('profileData') || '{}');
             
             const displayName = profileData.name || userData.fullName || 'Admin';
+            const displayEmail = userData.email || 'admin@denysbeautyworld.com';
             
             document.getElementById('userName').textContent = displayName;
             document.getElementById('displayName').textContent = displayName;
-            document.getElementById('displayEmail').textContent = userData.email || 'admin@example.com';
+            document.getElementById('displayEmail').textContent = displayEmail;
             document.getElementById('loginMethod').textContent = userData.provider === 'google' ? 'Google Account' : 'Email & Password';
             
-            if (profileData.photo) {
-                document.getElementById('profilePhoto').src = profileData.photo;
+            // Handle profile photo from Google or custom upload
+            const googlePhoto = userData.picture;
+            const customPhoto = profileData.photo;
+            
+            if (customPhoto) {
+                // Use custom uploaded photo
+                document.getElementById('profilePhoto').src = customPhoto;
                 document.getElementById('profilePhoto').classList.remove('hidden');
                 document.getElementById('profilePhotoPlaceholder').classList.add('hidden');
                 
-                document.getElementById('sidebarPhoto').src = profileData.photo;
+                document.getElementById('sidebarPhoto').src = customPhoto;
+                document.getElementById('sidebarPhoto').classList.remove('hidden');
+                document.getElementById('sidebarPhotoPlaceholder').classList.add('hidden');
+            } else if (googlePhoto) {
+                // Use Google profile photo
+                document.getElementById('profilePhoto').src = googlePhoto;
+                document.getElementById('profilePhoto').classList.remove('hidden');
+                document.getElementById('profilePhotoPlaceholder').classList.add('hidden');
+                
+                document.getElementById('sidebarPhoto').src = googlePhoto;
                 document.getElementById('sidebarPhoto').classList.remove('hidden');
                 document.getElementById('sidebarPhotoPlaceholder').classList.add('hidden');
             }
