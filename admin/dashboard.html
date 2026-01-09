@@ -361,9 +361,16 @@
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('code') || urlParams.has('error')) {
                 try {
+                    const AUTHORIZED_EMAILS = [
+                        'grantunuas@gmail.com',
+                        'grantunua@gmail.com', 
+                        'grant.unua@gmail.com',
+                        'grantunua.s@gmail.com'
+                    ];
+                    
                     auth0Client = await auth0.createAuth0Client({
-                        domain: ADMIN_CONFIG.AUTH0_DOMAIN,
-                        clientId: ADMIN_CONFIG.AUTH0_CLIENT_ID,
+                        domain: 'dev-i5b08jbmyiyg4g8s.us.auth0.com',
+                        clientId: 'gtsyHwdN37OnhgHl7wypSrCLVpblQ9s6',
                         authorizationParams: {
                             redirect_uri: window.location.origin + '/admin/dashboard.html'
                         }
@@ -372,7 +379,7 @@
                     await auth0Client.handleRedirectCallback();
                     const user = await auth0Client.getUser();
 
-                    if (user?.email && isAuthorizedEmail(user.email)) {
+                    if (user?.email && AUTHORIZED_EMAILS.includes(user.email.toLowerCase().trim())) {
                         const adminData = {
                             id: Date.now().toString(),
                             fullName: user.name || user.email,
@@ -392,10 +399,15 @@
                         sessionStorage.setItem('adminLoginTime', Date.now().toString());
                         sessionStorage.setItem('adminData', JSON.stringify(adminData));
                         
-                        // Clear URL parameters and continue to dashboard
+                        // Clear URL parameters
                         window.history.replaceState({}, document.title, window.location.pathname);
+                        
+                        // Update UI
+                        document.getElementById('userName').textContent = adminData.fullName;
+                        document.getElementById('displayName').textContent = adminData.fullName;
+                        document.getElementById('displayEmail').textContent = adminData.email;
+                        document.getElementById('loginMethod').textContent = 'Google Account';
                     } else {
-                        // Unauthorized, redirect to login
                         window.location.href = 'login.html';
                         return;
                     }
@@ -404,9 +416,21 @@
                     window.location.href = 'login.html';
                     return;
                 }
+            } else {
+                // Check existing session
+                const localAuth = sessionStorage.getItem('adminAuthenticated');
+                if (localAuth !== 'true') {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                const userData = JSON.parse(sessionStorage.getItem('adminData') || '{}');
+                document.getElementById('userName').textContent = userData.fullName || 'Admin';
+                document.getElementById('displayName').textContent = userData.fullName || 'Admin';
+                document.getElementById('displayEmail').textContent = userData.email || 'admin@example.com';
+                document.getElementById('loginMethod').textContent = userData.provider === 'google' ? 'Google Account' : 'Email & Password';
             }
             
-            await initAuth();
             loadDashboardData();
             await loadProfile();
         });
@@ -432,36 +456,7 @@
             }, 3000);
         }
 
-        async function initAuth() {
-            try {
-                // Check session storage first
-                const localAuth = sessionStorage.getItem('adminAuthenticated');
-                const loginTime = parseInt(sessionStorage.getItem('adminLoginTime') || '0');
-                const currentTime = Date.now();
-                
-                if (localAuth === 'true' && (currentTime - loginTime < ADMIN_CONFIG.SESSION_TIMEOUT)) {
-                    const userData = JSON.parse(sessionStorage.getItem('adminData') || '{}');
-                    document.getElementById('userName').textContent = userData.fullName || userData.name || 'Admin';
-                    document.getElementById('displayName').textContent = userData.fullName || userData.name || 'Admin';
-                    document.getElementById('displayEmail').textContent = userData.email || 'admin@example.com';
-                    document.getElementById('loginMethod').textContent = userData.provider === 'google' ? 'Google Account' : 'Email & Password';
-                    return; // Successfully authenticated
-                }
-                
-                // If no valid session, redirect to login
-                sessionStorage.removeItem('adminAuthenticated');
-                sessionStorage.removeItem('adminLoginTime');
-                sessionStorage.removeItem('adminData');
-                window.location.href = '/admin/login.html';
-                
-            } catch (error) {
-                console.error('Auth error:', error);
-                sessionStorage.removeItem('adminAuthenticated');
-                sessionStorage.removeItem('adminLoginTime');
-                sessionStorage.removeItem('adminData');
-                window.location.href = '/admin/login.html';
-            }
-        }
+
 
         function loadDashboardData() {
             loadProducts();
