@@ -9,6 +9,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#8B5A2B",
+                        "primary-light": "#B88A5C",
+                        "background-light": "#F9F5F0",
+                        "background-dark": "#1A1512",
+                        "gold": "#D4AF37",
+                        "champagne": "#F7E7CE",
+                    },
+                    fontFamily: {
+                        display: ['"Playfair Display"', 'serif'],
+                        body: ['"Lato"', 'sans-serif'],
+                    },
+                },
+            },
+        };
+        
         // Simple test - just set session and stay on dashboard
         console.log('Dashboard loading...');
         console.log('URL:', window.location.href);
@@ -1678,6 +1698,147 @@
                     sidebar.classList.add('-translate-x-full');
                 }
             });
+        });
+    </script>
+</body>
+</html>
+tify-center">
+                                <span class="material-icons text-green-600 text-lg lg:text-xl">video_library</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 p-4 lg:p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs lg:text-sm font-medium text-gray-600 dark:text-gray-400">Gallery Images</p>
+                                <p id="totalImages" class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-100">0</p>
+                            </div>
+                            <div class="w-10 h-10 lg:w-12 lg:h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <span class="material-icons text-purple-600 text-lg lg:text-xl">photo_library</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 p-4 lg:p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs lg:text-sm font-medium text-gray-600 dark:text-gray-400">Total Bookings</p>
+                                <p id="totalBookings" class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-100">0</p>
+                            </div>
+                            <div class="w-10 h-10 lg:w-12 lg:h-12 bg-gold/20 rounded-lg flex items-center justify-center">
+                                <span class="material-icons text-gold text-lg lg:text-xl">event</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Quick Actions</h3>
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        <button onclick="showSection('products')" class="flex items-center gap-2 p-3 bg-primary text-white rounded-lg hover:bg-primary-light">
+                            <span class="material-icons">add</span>
+                            Add Product
+                        </button>
+                        <button onclick="showSection('videos')" class="flex items-center gap-2 p-3 bg-red-500 text-white rounded-lg hover:bg-red-600">
+                            <span class="material-icons">video_call</span>
+                            Upload Video
+                        </button>
+                        <button onclick="showSection('gallery')" class="flex items-center gap-2 p-3 bg-green-500 text-white rounded-lg hover:bg-green-600">
+                            <span class="material-icons">add_photo_alternate</span>
+                            Add Image
+                        </button>
+                        <button onclick="showSection('bookings')" class="flex items-center gap-2 p-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
+                            <span class="material-icons">event</span>
+                            View Bookings
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other sections (hidden by default) -->
+            <div id="products-section" class="section hidden">
+                <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-8">Products</h1>
+                <p class="text-gray-600 dark:text-gray-400">Product management coming soon...</p>
+            </div>
+
+            <div id="videos-section" class="section hidden">
+                <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-8">Videos</h1>
+                <p class="text-gray-600 dark:text-gray-400">Video management coming soon...</p>
+            </div>
+
+            <div id="gallery-section" class="section hidden">
+                <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-8">Gallery</h1>
+                <p class="text-gray-600 dark:text-gray-400">Gallery management coming soon...</p>
+            </div>
+
+            <div id="services-section" class="section hidden">
+                <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-8">Services</h1>
+                <p class="text-gray-600 dark:text-gray-400">Service management coming soon...</p>
+            </div>
+
+            <div id="bookings-section" class="section hidden">
+                <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-8">Bookings</h1>
+                <p class="text-gray-600 dark:text-gray-400">Booking management coming soon...</p>
+            </div>
+
+            <div id="profile-section" class="section hidden">
+                <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-8">Profile</h1>
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 max-w-2xl">
+                    <div class="flex items-center gap-6 mb-6">
+                        <div class="w-20 h-20 bg-primary rounded-full flex items-center justify-center">
+                            <span class="material-icons text-white text-3xl">person</span>
+                        </div>
+                        <div>
+                            <h3 id="displayName" class="text-xl font-semibold text-gray-800 dark:text-gray-200">Google User</h3>
+                            <p id="displayEmail" class="text-gray-600 dark:text-gray-400">user@gmail.com</p>
+                            <p id="loginMethod" class="text-sm text-gray-500">Google Account</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation functions
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName + '-section').classList.remove('hidden');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('bg-primary', 'text-white');
+                item.classList.add('text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
+            });
+            
+            event.target.closest('.nav-item').classList.add('bg-primary', 'text-white');
+            event.target.closest('.nav-item').classList.remove('text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
+        }
+
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        // Mobile menu
+        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+        });
+
+        // Load user data
+        window.addEventListener('load', () => {
+            const userData = JSON.parse(sessionStorage.getItem('adminData') || '{}');
+            document.getElementById('userName').textContent = userData.fullName || 'Admin';
+            document.getElementById('displayName').textContent = userData.fullName || 'Admin';
+            document.getElementById('displayEmail').textContent = userData.email || 'admin@example.com';
+            document.getElementById('loginMethod').textContent = userData.provider === 'google' ? 'Google Account' : 'Email & Password';
         });
     </script>
 </body>
