@@ -124,7 +124,7 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-xs lg:text-sm font-medium text-gray-600 dark:text-gray-400">Total Products</p>
-                                <p class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-100">0</p>
+                                <p id="totalProducts" class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-100">0</p>
                             </div>
                             <div class="w-10 h-10 lg:w-12 lg:h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                                 <span class="material-icons text-blue-600 text-lg lg:text-xl">inventory</span>
@@ -136,7 +136,7 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-xs lg:text-sm font-medium text-gray-600 dark:text-gray-400">Videos</p>
-                                <p class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-100">0</p>
+                                <p id="totalVideos" class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-100">0</p>
                             </div>
                             <div class="w-10 h-10 lg:w-12 lg:h-12 bg-green-100 rounded-lg flex items-center justify-center">
                                 <span class="material-icons text-green-600 text-lg lg:text-xl">video_library</span>
@@ -148,7 +148,7 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-xs lg:text-sm font-medium text-gray-600 dark:text-gray-400">Gallery Images</p>
-                                <p class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-100">0</p>
+                                <p id="totalImages" class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-100">0</p>
                             </div>
                             <div class="w-10 h-10 lg:w-12 lg:h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                                 <span class="material-icons text-purple-600 text-lg lg:text-xl">photo_library</span>
@@ -160,7 +160,7 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-xs lg:text-sm font-medium text-gray-600 dark:text-gray-400">Bookings</p>
-                                <p class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-100">0</p>
+                                <p id="totalBookings" class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-100">0</p>
                             </div>
                             <div class="w-10 h-10 lg:w-12 lg:h-12 bg-gold/20 rounded-lg flex items-center justify-center">
                                 <span class="material-icons text-gold text-lg lg:text-xl">event</span>
@@ -173,15 +173,15 @@
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Quick Actions</h3>
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                        <button onclick="showSection('products')" class="flex items-center gap-2 p-3 bg-primary text-white rounded-lg hover:bg-primary-light">
+                        <button onclick="openProductModal()" class="flex items-center gap-2 p-3 bg-primary text-white rounded-lg hover:bg-primary-light">
                             <span class="material-icons">add</span>
                             Add Product
                         </button>
-                        <button onclick="showSection('videos')" class="flex items-center gap-2 p-3 bg-red-500 text-white rounded-lg hover:bg-red-600">
+                        <button onclick="openVideoModal()" class="flex items-center gap-2 p-3 bg-red-500 text-white rounded-lg hover:bg-red-600">
                             <span class="material-icons">video_call</span>
                             Upload Video
                         </button>
-                        <button onclick="showSection('gallery')" class="flex items-center gap-2 p-3 bg-green-500 text-white rounded-lg hover:bg-green-600">
+                        <button onclick="openGalleryModal()" class="flex items-center gap-2 p-3 bg-green-500 text-white rounded-lg hover:bg-green-600">
                             <span class="material-icons">add_photo_alternate</span>
                             Add Image
                         </button>
@@ -193,34 +193,97 @@
                 </div>
             </div>
 
-            <!-- Other sections -->
+            <!-- Products Section -->
             <div id="products-section" class="section hidden">
-                <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-8">Products</h1>
-                <p class="text-gray-600 dark:text-gray-400">Product management coming soon...</p>
+                <div class="mb-8">
+                    <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-2">Products</h1>
+                    <button onclick="openProductModal()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-light">
+                        <span class="material-icons inline mr-2">add</span>
+                        Add New Product
+                    </button>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                    <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <p class="text-gray-500 dark:text-gray-400 text-center py-8 col-span-full">No products found</p>
+                    </div>
+                </div>
             </div>
 
+            <!-- Videos Section -->
             <div id="videos-section" class="section hidden">
-                <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-8">Videos</h1>
-                <p class="text-gray-600 dark:text-gray-400">Video management coming soon...</p>
+                <div class="mb-8">
+                    <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-2">Videos</h1>
+                    <button onclick="openVideoModal()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-light">
+                        <span class="material-icons inline mr-2">video_call</span>
+                        Upload Video
+                    </button>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                    <div id="videosGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <p class="text-gray-500 dark:text-gray-400 text-center py-8 col-span-full">No videos found</p>
+                    </div>
+                </div>
             </div>
 
+            <!-- Gallery Section -->
             <div id="gallery-section" class="section hidden">
-                <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-8">Gallery</h1>
-                <p class="text-gray-600 dark:text-gray-400">Gallery management coming soon...</p>
+                <div class="mb-8">
+                    <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-2">Gallery</h1>
+                    <button onclick="openGalleryModal()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-light">
+                        <span class="material-icons inline mr-2">add_photo_alternate</span>
+                        Add Images
+                    </button>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                    <div id="galleryGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <p class="text-gray-500 dark:text-gray-400 text-center py-8 col-span-full">No images found</p>
+                    </div>
+                </div>
             </div>
 
+            <!-- Services Section -->
             <div id="services-section" class="section hidden">
-                <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-8">Services</h1>
-                <p class="text-gray-600 dark:text-gray-400">Service management coming soon...</p>
+                <div class="mb-8">
+                    <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-2">Services</h1>
+                    <button onclick="openServiceModal()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-light">
+                        <span class="material-icons inline mr-2">add</span>
+                        Add Service
+                    </button>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                    <div id="servicesList" class="space-y-4">
+                        <p class="text-gray-500 dark:text-gray-400 text-center py-8">No services found</p>
+                    </div>
+                </div>
             </div>
 
+            <!-- Bookings Section -->
             <div id="bookings-section" class="section hidden">
-                <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-8">Bookings</h1>
-                <p class="text-gray-600 dark:text-gray-400">Booking management coming soon...</p>
+                <div class="mb-8">
+                    <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-2">Bookings</h1>
+                    <button onclick="deleteAllBookings()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                        <span class="material-icons inline mr-2">delete_sweep</span>
+                        Delete All
+                    </button>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                    <div id="bookingsTable" class="overflow-x-auto">
+                        <p class="text-gray-500 dark:text-gray-400 text-center py-8">No bookings found</p>
+                    </div>
+                </div>
             </div>
 
+            <!-- Profile Section -->
             <div id="profile-section" class="section hidden">
-                <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-8">Profile</h1>
+                <div class="mb-8">
+                    <h1 class="text-3xl font-display font-bold text-gray-800 dark:text-gray-200 mb-2">Profile</h1>
+                </div>
+                
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 max-w-2xl">
                     <div class="flex items-center gap-6 mb-6">
                         <div class="w-20 h-20 bg-primary rounded-full flex items-center justify-center">
@@ -238,6 +301,12 @@
     </div>
 
     <script>
+        let products = JSON.parse(localStorage.getItem('products') || '[]');
+        let videos = JSON.parse(localStorage.getItem('videos') || '[]');
+        let gallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+        let services = JSON.parse(localStorage.getItem('services') || '[]');
+        let bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+
         function showSection(sectionName) {
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.add('hidden');
@@ -252,6 +321,324 @@
             
             event.target.closest('.nav-item').classList.add('bg-primary', 'text-white');
             event.target.closest('.nav-item').classList.remove('text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
+            
+            // Load data when switching sections
+            if (sectionName === 'products') loadProducts();
+            if (sectionName === 'videos') loadVideos();
+            if (sectionName === 'gallery') loadGallery();
+            if (sectionName === 'services') loadServices();
+            if (sectionName === 'bookings') loadBookings();
+        }
+
+        function updateStats() {
+            document.getElementById('totalProducts').textContent = products.length;
+            document.getElementById('totalVideos').textContent = videos.length;
+            document.getElementById('totalImages').textContent = gallery.length;
+            document.getElementById('totalBookings').textContent = bookings.length;
+        }
+
+        function loadProducts() {
+            const grid = document.getElementById('productsGrid');
+            if (products.length === 0) {
+                grid.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-8 col-span-full">No products found</p>';
+            } else {
+                grid.innerHTML = products.map(product => `
+                    <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
+                        <img src="${product.image || '/placeholder.jpg'}" alt="${product.name}" class="w-full h-32 object-cover rounded mb-3">
+                        <h4 class="font-semibold text-gray-800 dark:text-gray-200">${product.name}</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">${product.description || ''}</p>
+                        <p class="text-lg font-bold text-primary">₦${product.price}</p>
+                        <div class="flex gap-2 mt-3">
+                            <button onclick="deleteProduct(${product.id})" class="flex-1 bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function loadVideos() {
+            const grid = document.getElementById('videosGrid');
+            if (videos.length === 0) {
+                grid.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-8 col-span-full">No videos found</p>';
+            } else {
+                grid.innerHTML = videos.map(video => `
+                    <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
+                        <div class="aspect-video bg-gray-200 rounded mb-3 flex items-center justify-center">
+                            <span class="material-icons text-gray-500 text-4xl">video_library</span>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-2">${video.title}</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${video.description || 'No description'}</p>
+                        <button onclick="deleteVideo(${video.id})" class="w-full bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Delete</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function loadGallery() {
+            const grid = document.getElementById('galleryGrid');
+            if (gallery.length === 0) {
+                grid.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-8 col-span-full">No images found</p>';
+            } else {
+                grid.innerHTML = gallery.map(image => `
+                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow overflow-hidden">
+                        <div class="aspect-square bg-gray-200 flex items-center justify-center">
+                            <span class="material-icons text-gray-500">image</span>
+                        </div>
+                        <div class="p-3">
+                            <h4 class="font-semibold text-gray-800 dark:text-gray-200 text-sm mb-1">${image.title}</h4>
+                            <button onclick="deleteGalleryImage(${image.id})" class="w-full bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function loadServices() {
+            const list = document.getElementById('servicesList');
+            if (services.length === 0) {
+                list.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-8">No services found</p>';
+            } else {
+                list.innerHTML = services.map(service => `
+                    <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow flex justify-between items-start">
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-1">${service.name}</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">${service.description || 'No description'}</p>
+                            <span class="font-bold text-primary">₦${service.price}</span>
+                        </div>
+                        <button onclick="deleteService(${service.id})" class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Delete</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function loadBookings() {
+            const table = document.getElementById('bookingsTable');
+            if (bookings.length === 0) {
+                table.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-8">No bookings found</p>';
+            } else {
+                table.innerHTML = `
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="text-left py-3 px-4">Customer</th>
+                                <th class="text-left py-3 px-4">Phone</th>
+                                <th class="text-left py-3 px-4">Service</th>
+                                <th class="text-left py-3 px-4">Date</th>
+                                <th class="text-left py-3 px-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${bookings.map(booking => `
+                                <tr class="border-b">
+                                    <td class="py-3 px-4">${booking.customerName}</td>
+                                    <td class="py-3 px-4">${booking.customerPhone}</td>
+                                    <td class="py-3 px-4">${booking.serviceName}</td>
+                                    <td class="py-3 px-4">${booking.bookingDate}</td>
+                                    <td class="py-3 px-4">
+                                        <button onclick="deleteBooking(${booking.id})" class="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600">Delete</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+        }
+
+        // Modal functions
+        function openProductModal() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl max-w-md w-full">
+                    <h3 class="text-lg font-semibold mb-4">Add New Product</h3>
+                    <form id="productForm">
+                        <div class="space-y-4">
+                            <input type="text" id="productName" placeholder="Product Name" required class="w-full p-3 border rounded-lg">
+                            <textarea id="productDescription" placeholder="Description" class="w-full p-3 border rounded-lg h-20"></textarea>
+                            <input type="number" id="productPrice" placeholder="Price" required class="w-full p-3 border rounded-lg">
+                        </div>
+                        <div class="flex gap-3 mt-6">
+                            <button type="submit" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg">Add Product</button>
+                            <button type="button" onclick="this.closest('.fixed').remove()" class="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            document.getElementById('productForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const product = {
+                    id: Date.now(),
+                    name: document.getElementById('productName').value,
+                    description: document.getElementById('productDescription').value,
+                    price: document.getElementById('productPrice').value
+                };
+                products.push(product);
+                localStorage.setItem('products', JSON.stringify(products));
+                modal.remove();
+                loadProducts();
+                updateStats();
+            });
+        }
+
+        function openVideoModal() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl max-w-md w-full">
+                    <h3 class="text-lg font-semibold mb-4">Upload Video</h3>
+                    <form id="videoForm">
+                        <div class="space-y-4">
+                            <input type="text" id="videoTitle" placeholder="Video Title" required class="w-full p-3 border rounded-lg">
+                            <textarea id="videoDescription" placeholder="Description" class="w-full p-3 border rounded-lg h-20"></textarea>
+                        </div>
+                        <div class="flex gap-3 mt-6">
+                            <button type="submit" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg">Add Video</button>
+                            <button type="button" onclick="this.closest('.fixed').remove()" class="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            document.getElementById('videoForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const video = {
+                    id: Date.now(),
+                    title: document.getElementById('videoTitle').value,
+                    description: document.getElementById('videoDescription').value
+                };
+                videos.push(video);
+                localStorage.setItem('videos', JSON.stringify(videos));
+                modal.remove();
+                loadVideos();
+                updateStats();
+            });
+        }
+
+        function openGalleryModal() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl max-w-md w-full">
+                    <h3 class="text-lg font-semibold mb-4">Add Gallery Image</h3>
+                    <form id="galleryForm">
+                        <div class="space-y-4">
+                            <input type="text" id="galleryTitle" placeholder="Image Title" required class="w-full p-3 border rounded-lg">
+                        </div>
+                        <div class="flex gap-3 mt-6">
+                            <button type="submit" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg">Add Image</button>
+                            <button type="button" onclick="this.closest('.fixed').remove()" class="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            document.getElementById('galleryForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const image = {
+                    id: Date.now(),
+                    title: document.getElementById('galleryTitle').value
+                };
+                gallery.push(image);
+                localStorage.setItem('gallery', JSON.stringify(gallery));
+                modal.remove();
+                loadGallery();
+                updateStats();
+            });
+        }
+
+        function openServiceModal() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl max-w-md w-full">
+                    <h3 class="text-lg font-semibold mb-4">Add New Service</h3>
+                    <form id="serviceForm">
+                        <div class="space-y-4">
+                            <input type="text" id="serviceName" placeholder="Service Name" required class="w-full p-3 border rounded-lg">
+                            <textarea id="serviceDescription" placeholder="Description" class="w-full p-3 border rounded-lg h-20"></textarea>
+                            <input type="number" id="servicePrice" placeholder="Price (₦)" required class="w-full p-3 border rounded-lg">
+                        </div>
+                        <div class="flex gap-3 mt-6">
+                            <button type="submit" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg">Add Service</button>
+                            <button type="button" onclick="this.closest('.fixed').remove()" class="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            document.getElementById('serviceForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const service = {
+                    id: Date.now(),
+                    name: document.getElementById('serviceName').value,
+                    description: document.getElementById('serviceDescription').value,
+                    price: document.getElementById('servicePrice').value
+                };
+                services.push(service);
+                localStorage.setItem('services', JSON.stringify(services));
+                modal.remove();
+                loadServices();
+            });
+        }
+
+        // Delete functions
+        function deleteProduct(id) {
+            if (confirm('Delete this product?')) {
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem('products', JSON.stringify(products));
+                loadProducts();
+                updateStats();
+            }
+        }
+
+        function deleteVideo(id) {
+            if (confirm('Delete this video?')) {
+                videos = videos.filter(v => v.id !== id);
+                localStorage.setItem('videos', JSON.stringify(videos));
+                loadVideos();
+                updateStats();
+            }
+        }
+
+        function deleteGalleryImage(id) {
+            if (confirm('Delete this image?')) {
+                gallery = gallery.filter(g => g.id !== id);
+                localStorage.setItem('gallery', JSON.stringify(gallery));
+                loadGallery();
+                updateStats();
+            }
+        }
+
+        function deleteService(id) {
+            if (confirm('Delete this service?')) {
+                services = services.filter(s => s.id !== id);
+                localStorage.setItem('services', JSON.stringify(services));
+                loadServices();
+            }
+        }
+
+        function deleteBooking(id) {
+            if (confirm('Delete this booking?')) {
+                bookings = bookings.filter(b => b.id !== id);
+                localStorage.setItem('bookings', JSON.stringify(bookings));
+                loadBookings();
+                updateStats();
+            }
+        }
+
+        function deleteAllBookings() {
+            if (confirm('Delete ALL bookings? This cannot be undone.')) {
+                bookings = [];
+                localStorage.setItem('bookings', JSON.stringify(bookings));
+                loadBookings();
+                updateStats();
+            }
         }
 
         function logout() {
@@ -259,16 +646,20 @@
             window.location.href = 'login.html';
         }
 
+        // Mobile menu
         document.getElementById('mobileMenuBtn').addEventListener('click', () => {
             document.getElementById('sidebar').classList.toggle('-translate-x-full');
         });
 
+        // Initialize
         window.addEventListener('load', () => {
             const userData = JSON.parse(sessionStorage.getItem('adminData') || '{}');
             document.getElementById('userName').textContent = userData.fullName || 'Admin';
             document.getElementById('displayName').textContent = userData.fullName || 'Admin';
             document.getElementById('displayEmail').textContent = userData.email || 'admin@example.com';
             document.getElementById('loginMethod').textContent = userData.provider === 'google' ? 'Google Account' : 'Email & Password';
+            
+            updateStats();
         });
     </script>
 </body>
