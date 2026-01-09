@@ -152,6 +152,10 @@
                         setSession(adminData);
                         window.location.href = 'dashboard.html';
                         return;
+                    } else if (user && user.email) {
+                        // Unauthorized email - redirect to main website
+                        window.location.href = '../index.html';
+                        return;
                     }
                 }
                 
@@ -198,6 +202,12 @@
         }
 
         function authenticateAdmin(email, password) {
+            // Check if email is authorized first
+            if (!isAuthorizedEmail(email)) {
+                window.location.href = '../index.html';
+                return null;
+            }
+            
             // Check login attempts first
             if (!checkLoginAttempts(email)) {
                 const lockoutTime = Math.ceil(ADMIN_CONFIG.LOCKOUT_DURATION / 60000);
