@@ -134,6 +134,23 @@
     </div>
 
     <script>
+        // Redirect unauthorized users immediately
+        window.addEventListener('load', () => {
+            // Check if user is trying to access signup directly
+            const urlParams = new URLSearchParams(window.location.search);
+            const email = urlParams.get('email') || document.getElementById('email')?.value;
+            
+            // If no authorized admin exists, allow first signup
+            const admins = JSON.parse(localStorage.getItem('adminAccounts') || '[]');
+            if (admins.length === 0) {
+                // Allow first admin creation
+                return;
+            }
+            
+            // If admin exists, redirect to main website
+            window.location.href = '../index.html';
+        });
+        
         // Use config from config.js
         
         let auth0Client;
@@ -185,20 +202,15 @@
             // Check if this is the first admin (master admin)
             const admins = JSON.parse(localStorage.getItem('adminAccounts') || '[]');
             
-            // Only allow signup if no admins exist (first admin)
+            // Only allow signup if no admins exist AND email is authorized
             if (admins.length > 0) {
-                showMessage('Admin already exists. Redirecting to login in 3 seconds...', 'error');
-                
-                let countdown = 3;
-                const countdownInterval = setInterval(() => {
-                    countdown--;
-                    if (countdown > 0) {
-                        showMessage(`Admin already exists. Redirecting to login in ${countdown} seconds...`, 'error');
-                    } else {
-                        clearInterval(countdownInterval);
-                        window.location.href = 'login.html';
-                    }
-                }, 1000);
+                window.location.href = '../index.html';
+                return false;
+            }
+            
+            // Check if email is authorized
+            if (!isAuthorizedEmail(adminData.email)) {
+                window.location.href = '../index.html';
                 return false;
             }
             
@@ -270,8 +282,7 @@
             // Check if admin already exists before allowing Google signup
             const admins = JSON.parse(localStorage.getItem('adminAccounts') || '[]');
             if (admins.length > 0) {
-                showMessage('Admin already exists. Only authorized emails can access. Redirecting to login...', 'error');
-                setTimeout(() => window.location.href = 'login.html', 3000);
+                window.location.href = '../index.html';
                 return;
             }
             
@@ -291,7 +302,7 @@
                 window.location.href = authUrl;
             } catch (error) {
                 console.error('Google signup error:', error);
-                showMessage('Google signup failed: ' + error.message);
+                window.location.href = '../index.html';
             }
         }
 
