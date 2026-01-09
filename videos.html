@@ -111,8 +111,9 @@
 
         async function loadVideos() {
             try {
-                const response = await fetch('/api/videos');
-                allVideos = await response.json();
+                // Load videos from localStorage (uploaded via admin dashboard)
+                const storedVideos = JSON.parse(localStorage.getItem('videos') || '[]');
+                allVideos = storedVideos;
                 
                 document.getElementById('loadingMessage').classList.add('hidden');
                 
@@ -134,10 +135,10 @@
             
             grid.innerHTML = videos.map(video => `
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                    <div class="aspect-video overflow-hidden cursor-pointer relative" onclick="openVideo('${video.video_url}')">
-                        ${video.video_url ? `
+                    <div class="aspect-video overflow-hidden cursor-pointer relative" onclick="openVideo('${video.videoUrl}')">
+                        ${video.videoUrl ? `
                             <video class="w-full h-full object-cover" muted>
-                                <source src="${video.video_url}" type="video/mp4">
+                                <source src="${video.videoUrl}" type="video/mp4">
                             </video>
                         ` : `
                             <div class="w-full h-full bg-gray-300 flex items-center justify-center">
@@ -151,7 +152,7 @@
                     <div class="p-3 lg:p-6">
                         <h3 class="font-display text-base lg:text-xl font-semibold text-gray-800 mb-2">${video.title}</h3>
                         <p class="text-gray-600 text-xs lg:text-sm mb-3 lg:mb-4 line-clamp-2">${video.description || 'Watch this amazing beauty transformation!'}</p>
-                        <button onclick="openVideo('${video.video_url}')" class="w-full bg-primary text-white px-3 lg:px-4 py-2 rounded-lg hover:bg-primary-light transition-colors flex items-center justify-center gap-2 text-sm lg:text-base">
+                        <button onclick="openVideo('${video.videoUrl}')" class="w-full bg-primary text-white px-3 lg:px-4 py-2 rounded-lg hover:bg-primary-light transition-colors flex items-center justify-center gap-2 text-sm lg:text-base">
                             <span class="material-icons text-sm lg:text-base">play_arrow</span>
                             Watch Video
                         </button>
