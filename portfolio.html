@@ -319,8 +319,9 @@ let allGallery = [];
 
 async function loadGallery() {
     try {
-        const response = await fetch('/api/gallery');
-        allGallery = await response.json();
+        // Load gallery from localStorage (uploaded via admin dashboard)
+        const storedGallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+        allGallery = storedGallery;
         
         document.getElementById('loadingMessage').classList.add('hidden');
         
@@ -355,9 +356,9 @@ function displayGallery(images) {
         const spanClass = isLarge ? 'row-span-2' : '';
         
         return `
-            <div class="group relative ${spanClass} rounded-2xl overflow-hidden cursor-pointer shadow-xl" onclick="viewFullImage('${image.image_url}', '${image.title}')">
+            <div class="group relative ${spanClass} rounded-2xl overflow-hidden cursor-pointer shadow-xl" onclick="viewFullImage('${image.imageUrl}', '${image.title}')">
                 <div class="zoom-container h-full w-full relative">
-                    <img alt="${image.title}" class="zoom-image w-full h-full object-cover" src="${image.image_url}">
+                    <img alt="${image.title}" class="zoom-image w-full h-full object-cover" src="${image.imageUrl}">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
                         <span class="text-secondary text-xs font-bold tracking-widest uppercase mb-1">${image.category}</span>
                         <h3 class="text-white font-serif text-xl italic">${image.title}</h3>
