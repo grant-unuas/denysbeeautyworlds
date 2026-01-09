@@ -989,7 +989,7 @@
             const profileData = JSON.parse(localStorage.getItem('profileData') || '{}');
             
             const displayName = profileData.name || userData.fullName || 'Admin';
-            const displayEmail = userData.email || 'admin@denysbeautyworld.com';
+            const displayEmail = userData.email || ADMIN_CONFIG.AUTHORIZED_EMAILS[0];
             
             document.getElementById('userName').textContent = displayName;
             document.getElementById('displayName').textContent = displayName;
