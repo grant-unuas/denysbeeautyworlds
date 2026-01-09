@@ -287,6 +287,108 @@
 </div>
 </div>
 </div>
+<!-- Services Portfolio Gallery -->
+<section class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center mb-12">
+        <div class="flex items-center justify-center space-x-4 mb-6">
+            <span class="h-px w-12 bg-primary"></span>
+            <h2 class="font-display text-3xl font-bold text-gray-900 dark:text-white uppercase tracking-widest">Our Work</h2>
+            <span class="h-px w-12 bg-primary"></span>
+        </div>
+        <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">See the stunning transformations and quality craftsmanship that sets us apart</p>
+    </div>
+
+    <!-- Filter Buttons -->
+    <div class="flex flex-wrap justify-center gap-3 mb-8">
+        <button onclick="filterGallery('all')" class="filter-btn active px-6 py-2.5 rounded-full bg-primary text-white text-sm font-medium shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5">All Work</button>
+        <button onclick="filterGallery('installation')" class="filter-btn px-6 py-2.5 rounded-full glass-card bg-white/50 dark:bg-black/30 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-primary hover:text-white transition-all">Installation</button>
+        <button onclick="filterGallery('styling')" class="filter-btn px-6 py-2.5 rounded-full glass-card bg-white/50 dark:bg-black/30 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-primary hover:text-white transition-all">Styling</button>
+        <button onclick="filterGallery('revamping')" class="filter-btn px-6 py-2.5 rounded-full glass-card bg-white/50 dark:bg-black/30 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-primary hover:text-white transition-all">Revamping</button>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="galleryGrid">
+        <!-- Installation Work -->
+        <div class="gallery-item installation group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+            <div class="aspect-[4/5] overflow-hidden">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtVck18ynQ5TC79ePEAnSMRMwlWqHAYt5IBVKBv3_K1Y3n-zKLAbfypFxMnhKWRn5Yytpn8x2V4FWGy7fLI941ZqW4EiXXdzX-yyQJPgYJ6dC_dHDf6FUaQR1kblatAnS0rHUTmp6SlY_eKX8AK2SK4p-SG3fDaYZjUBEv3nx9YtpD378J2aougXGZfstsSAQqFp3uYTqIKW0OonVBGHWM3jyF1jRQ5Ckc8cJJfQZsFS8cQCFoWVvu882MPN0YwkmckwQg1sCA2TvW" alt="Professional Wig Installation" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="absolute bottom-4 left-4 right-4 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                    <h3 class="font-serif text-lg font-bold mb-1">Seamless Installation</h3>
+                    <p class="text-sm opacity-90">Natural hairline perfection</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Styling Work -->
+        <div class="gallery-item styling group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+            <div class="aspect-[4/5] overflow-hidden">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAMTz2hTRlgbi5RSq21ceMK8600rbbWd9Jrh6bM1A7IvIFkWQgnDkwSkIqofefHlQ_sZu7qJwZ2w2kQI4_R86kEDIOrbv9slm64a_XKENSbj8-TAxm498_f46Rj5giDhUT7se1IGKe4ons618_giX1LIIfJGHr2i02yaeXCWOHznU-lYHcoT9jfRZ-A7YVAUjtsZJiu6JJ2uFyB39ScNHdbAwE1BaOYylCJbjMUuBeVPzDK11OO8wEdFV7Xy0bUxxQvLRB9oqWprnO" alt="Professional Wig Styling" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="absolute bottom-4 left-4 right-4 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                    <h3 class="font-serif text-lg font-bold mb-1">Expert Styling</h3>
+                    <p class="text-sm opacity-90">Glamorous transformations</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revamping Work -->
+        <div class="gallery-item revamping group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+            <div class="aspect-[4/5] overflow-hidden">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvoaLy-LRpYZhCJf4_aoxSOkJ4psFLLqwBCVJJBF78aK97_kyWNq9mcbhdYcPCr5h4NBco8jhGsgHHLN_2Cp4Npx1fjuj_9qQRIJjEAm7QWsQB_whE2qJ1MrX5kQEqJM8T1pqhJyGyUurJGqdu9gJWP9zdxHs0fXiYwRsSneeC1PimZ4w3qS1AJRMBl_4QPcYPw552sar38xWLaUBwqypSeD9UT3S-NoYTbwRJcK45wgMGGeDzO45TYuu5ySQm9wg2Xok3EzScFlXf" alt="Wig Revamping Before After" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="absolute bottom-4 left-4 right-4 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                    <h3 class="font-serif text-lg font-bold mb-1">Complete Revamp</h3>
+                    <p class="text-sm opacity-90">Bringing wigs back to life</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- More Installation Work -->
+        <div class="gallery-item installation group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+            <div class="aspect-[4/5] overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1560869713-7d0b29837c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Lace Front Installation" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="absolute bottom-4 left-4 right-4 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                    <h3 class="font-serif text-lg font-bold mb-1">Lace Front Mastery</h3>
+                    <p class="text-sm opacity-90">Invisible hairline technique</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- More Styling Work -->
+        <div class="gallery-item styling group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+            <div class="aspect-[4/5] overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Curly Wig Styling" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="absolute bottom-4 left-4 right-4 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                    <h3 class="font-serif text-lg font-bold mb-1">Curly Perfection</h3>
+                    <p class="text-sm opacity-90">Defined curl patterns</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- More Revamping Work -->
+        <div class="gallery-item revamping group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+            <div class="aspect-[4/5] overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Wig Restoration" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="absolute bottom-4 left-4 right-4 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                    <h3 class="font-serif text-lg font-bold mb-1">Restoration Magic</h3>
+                    <p class="text-sm opacity-90">From worn to wonderful</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="text-center mt-12">
+        <a href="portfolio.html" class="inline-flex items-center gap-2 shimmer-btn text-white px-8 py-3 rounded-full font-bold uppercase tracking-wider shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
+            <span class="material-icons text-sm">photo_library</span>
+            View Full Portfolio
+        </a>
+    </div>
+</section>
 </main>
 <footer class="relative pt-20 pb-10 overflow-hidden bg-background-light dark:bg-background-dark">
 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-secondary to-transparent opacity-50"></div>
@@ -413,11 +515,11 @@ Join
             });
         }
 
-        // Load additional services from API
+        // Load services from localStorage (same as admin dashboard)
         async function loadDynamicServices() {
             try {
-                const response = await fetch('/api/services');
-                const services = await response.json();
+                // Get services from localStorage
+                const services = JSON.parse(localStorage.getItem('services') || '[]');
                 
                 const container = document.getElementById('dynamicServices');
                 if (services.length > 0) {
@@ -426,7 +528,7 @@ Join
                             <div class="bg-white/50 dark:bg-black/20 p-5 rounded-lg flex items-center justify-between border border-transparent group-hover:border-primary/30">
                                 <div class="flex items-center gap-4">
                                     <div class="bg-primary/10 dark:bg-primary/20 p-3 rounded-full text-primary">
-                                        <span class="material-icons text-2xl">star</span>
+                                        <span class="material-icons text-2xl">${service.icon || 'star'}</span>
                                     </div>
                                     <div>
                                         <h3 class="font-serif font-bold text-lg text-gray-800 dark:text-gray-100 group-hover:text-primary transition-colors">${service.name}</h3>
@@ -445,6 +547,42 @@ Join
                 console.error('Error loading services:', error);
             }
         }
+
+        // Gallery filtering functionality
+        function filterGallery(category) {
+            const items = document.querySelectorAll('.gallery-item');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            // Update active button
+            buttons.forEach(btn => btn.classList.remove('active', 'bg-primary', 'text-white'));
+            event.target.classList.add('active', 'bg-primary', 'text-white');
+            
+            // Filter items
+            items.forEach(item => {
+                if (category === 'all' || item.classList.contains(category)) {
+                    item.style.display = 'block';
+                    item.style.animation = 'fadeInUp 0.5s ease-out';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Add fadeInUp animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
 
         // Load services when page loads
         document.addEventListener('DOMContentLoaded', loadDynamicServices);
